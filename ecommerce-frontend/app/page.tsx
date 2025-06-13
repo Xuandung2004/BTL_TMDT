@@ -1,16 +1,25 @@
 'use client';
 
 import React, { use, useEffect } from "react";
-import { addToCart, fetchProducts } from "./services/api";
+import { addToCart, fetchProducts, fetchCurrentUser, logout} from "./services/api";
 import Link from "next/link";
 
 export default function Home() {
   const [products, setProducts] = React.useState<any[]>([]);
+  const [user, setUser] = React.useState<{username: string} | null>(null);
 
   useEffect(() => {
     fetchProducts().then((res) => {
       setProducts(res.data);
     })
+
+    // Lấy thông tin user nếu có token
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchCurrentUser()
+        .then(res => setUser(res.data))
+        .catch(() => setUser(null)); // Nếu lỗi, không hiển thị user
+    }
   }, []);
 
   const handleAddToCart = async (productId: number) => {
@@ -22,8 +31,35 @@ export default function Home() {
     }
   };
 
+  // Hàm logout
+  const handleLogout = () => {
+    logout(); // Xóa token, cookies nếu có
+    setUser(null); // Reset trạng thái user
+  };
+
   return (
     <div>
+      {/* Hiển thị tên user nếu đăng nhập */}
+      <div className="max-w-6xl mx-auto px-4 py-4 flex justify-end text-right">
+        {user ? (
+          <div className="flex flex-col items-end space-y-1">
+            <span>
+              Xin chào, <strong>{user.username}</strong>!
+            </span>
+            <button
+              onClick={handleLogout}
+              className="text-red-600 hover:text-red-800 border border-red-600 px-3 py-1 rounded transition"
+              type="button"
+            >
+              Đăng xuất
+            </button>
+          </div>
+        ) : (
+          <Link href="/login" className="text-blue-600 hover:underline">
+            Đăng nhập
+          </Link>
+        )}
+      </div>
       {/* Banner Hero */}
       <section className="bg-gradient-to-br from-blue-600 via-indigo-500 to-purple-500 py-16 text-center text-white">
         <h1 className="text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-lg">Chào mừng đến với Trung Shop</h1>

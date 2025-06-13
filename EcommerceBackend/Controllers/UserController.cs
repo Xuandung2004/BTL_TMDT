@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers{
     [ApiController]
@@ -48,14 +50,30 @@ namespace Controllers{
                 return NotFound();
             return user;
         }
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<ActionResult<User>> GetCurrentUser()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
 
+            if (!int.TryParse(userIdClaim.Value, out int userId))
+                return Unauthorized();
 
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return NotFound();
+
+            return user;
+        }
     }
 
-    public class CreateUserRequest{
-        public string Username {get; set;}
-        public string Password {get; set;}
-        public string FullName {get; set;}
-        public string Phone {get; set;}
+    public class CreateUserRequest
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string FullName { get; set; }
+        public string Phone { get; set; }
     }
 }
