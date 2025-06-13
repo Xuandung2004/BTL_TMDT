@@ -3,7 +3,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-var builder = WebApplication.CreateBuilder(args);
+
+var options = new WebApplicationOptions
+{
+    WebRootPath = "wwwroot"
+};
+var builder = WebApplication.CreateBuilder(options);
 
 //Add DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -54,7 +59,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.WebHost.UseWebRoot("wwwroot");
 
 var app = builder.Build();
 
