@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";   
-import { fetchCart, updateCartItem } from "../services/api";
+import { fetchCart, updateCartItem, deleteCartItem } from "../services/api";
 
 export default function CartPage(){
     const [cartItems, setCartItems] = useState<any[]>([]);
@@ -49,6 +49,23 @@ export default function CartPage(){
             alert("Lỗi khi cập nhật số lượng sản phẩm. Vui lòng thử lại sau.");
         }
     }
+    const handleDeleteItem = async (productId: number) => {
+        const confirmDelete = window.confirm("Bạn có chắc muốn xoá sản phẩm này khỏi giỏ hàng không? 🗑️");
+        if (!confirmDelete) return; // Nếu người dùng bấm huỷ thì thôi
+
+        try {
+            await deleteCartItem(productId);
+            setCartItems((prevItems) => prevItems.filter(item => item.productId !== productId));
+            const newTotal = cartItems
+            .filter(item => item.productId !== productId)
+            .reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+            setTotal(newTotal);
+        } catch (err) {
+            alert("Lỗi khi xoá sản phẩm khỏi giỏ hàng. Vui lòng thử lại sau.");
+        }
+        };
+
+
 
     if (loading) {
         return <div className="text-center py-10">Đang tải giỏ hàng...</div>;
@@ -69,6 +86,7 @@ export default function CartPage(){
                             <th className="px-4 py-2 text-left">Sản phẩm</th>
                             <th className="px-4 py-2 text-left">Số lượng</th>
                             <th className="px-4 py-2 text-right">Giá</th>
+                            <th className="px-4 py-2 text-center">Xoá</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -85,6 +103,14 @@ export default function CartPage(){
                                         />
                                 </td>
                                 <td className="px-4 py-2 text-right">{(item.product.price * item.quantity).toLocaleString()} đ</td>
+                                <td className="px-4 py-2 text-center">
+                                    <button 
+                                    className="text-red-500 hover:text-red-700"
+                                    onClick={() => handleDeleteItem(item.productId)}
+                                    >
+                                    Xoá
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

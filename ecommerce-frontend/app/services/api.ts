@@ -79,4 +79,27 @@ export const updateCartItem = (productId: number, quantity: number) => {
   });
 }
 
+//Xoá sản phẩm khỏi giỏ hàng
+export const deleteCartItem = (productId: number) => {
+  return API.delete(`/cart/delete/${productId}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
+
+// Lấy thông tin user hiện tại
+export const fetchCurrentUser = () => {
+  return API.get('/users/me', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
+// Xóa token để đăng xuất
+export const logout = () => {
+  localStorage.removeItem('token');
+};
+
+
 export default API;

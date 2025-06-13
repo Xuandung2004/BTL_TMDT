@@ -106,6 +106,25 @@ namespace Controllers{
             await _context.SaveChangesAsync();
             return Ok(new { message = "Cập nhật số lượng thành công." });
         }
+        //Xoá sản phẩm khỏi giỏ hàng
+        [HttpDelete("delete/{productId}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteFromCart(int productId)
+        {
+            var userId = GetUserIdFromToken();
+            if (userId == null)
+                return Unauthorized("Không tìm thấy người dùng.");
+
+            var cartItem = await _context.Carts.FirstOrDefaultAsync(
+                c => c.UserId == userId && c.ProductId == productId);
+
+            if (cartItem == null)
+                return NotFound("Không tìm thấy sản phẩm trong giỏ hàng.");
+
+            _context.Carts.Remove(cartItem);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Đã xoá sản phẩm khỏi giỏ hàng." });
+        }
     }
 
     public class CartRequest{
