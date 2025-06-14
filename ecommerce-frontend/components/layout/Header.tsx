@@ -1,10 +1,22 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { FiSearch, FiShoppingCart, FiUser } from 'react-icons/fi';
+import { FiSearch, FiShoppingCart, FiUser, FiChevronDown } from 'react-icons/fi';
+import CategoryList from '../categories/CategoryList';
 
 const Header = () => {
+  const [showCategories, setShowCategories] = useState(false);
+
+  // Temporary mock data - will be replaced with API call
+  const categories = [
+    { id: 1, name: 'Electronics', slug: 'electronics' },
+    { id: 2, name: 'Fashion', slug: 'fashion' },
+    { id: 3, name: 'Home & Living', slug: 'home-living' },
+    { id: 4, name: 'Books', slug: 'books' },
+    { id: 5, name: 'Sports', slug: 'sports' },
+  ];
+
   return (
     <header className="sticky top-0 z-50 bg-[#FFB629]">
       <div className="container mx-auto px-4">
@@ -28,9 +40,16 @@ const Header = () => {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/categories" className="text-gray-900 hover:text-gray-700 font-medium">
-              Categories
-            </Link>
+            <div className="relative">
+              <button
+                className="flex items-center space-x-1 text-gray-900 hover:text-gray-700 font-medium"
+                onClick={() => setShowCategories(!showCategories)}
+              >
+                <span>Categories</span>
+                <FiChevronDown className={`transition-transform duration-200 ${showCategories ? 'rotate-180' : ''}`} />
+              </button>
+              {showCategories && <CategoryList categories={categories} />}
+            </div>
             <Link href="/new-arrivals" className="text-gray-900 hover:text-gray-700 font-medium">
               New Arrivals
             </Link>

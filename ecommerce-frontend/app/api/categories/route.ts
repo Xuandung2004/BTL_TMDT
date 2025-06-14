@@ -1,53 +1,59 @@
 import { NextResponse } from 'next/server';
-import type { Category } from '@/types';
 
-const categories: Category[] = [
+// Mock data for fashion categories
+const categories = [
   {
     id: 1,
-    name: 'Accessories',
-    image: 'https://images.unsplash.com/photo-1523779105320-d1cd346ff52b?q=80&w=1000&auto=format&fit=crop',
-    link: '/category/accessories'
+    name: "Áo",
+    description: "Áo thời trang nam nữ các loại",
+    imageUrl: "/images/categories/tops.jpg",
+    slug: "tops"
   },
   {
     id: 2,
-    name: 'Jewellery',
-    image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1000&auto=format&fit=crop',
-    link: '/category/jewellery'
+    name: "Quần",
+    description: "Quần jeans, kaki, short thời trang",
+    imageUrl: "/images/categories/bottoms.jpg",
+    slug: "bottoms"
   },
   {
     id: 3,
-    name: 'Denims',
-    image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=1000&auto=format&fit=crop',
-    link: '/category/denims'
+    name: "Đầm & Váy",
+    description: "Đầm và váy thời trang nữ",
+    imageUrl: "/images/categories/dresses.jpg",
+    slug: "dresses"
   },
   {
     id: 4,
-    name: 'Tops',
-    image: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=1000&auto=format&fit=crop',
-    link: '/category/tops'
+    name: "Đồ thể thao",
+    description: "Trang phục thể thao nam nữ",
+    imageUrl: "/images/categories/sportswear.jpg",
+    slug: "sportswear"
   },
   {
     id: 5,
-    name: 'Dresses',
-    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=1000&auto=format&fit=crop',
-    link: '/category/dresses'
+    name: "Phụ kiện",
+    description: "Túi xách, nón, thắt lưng, phụ kiện thời trang",
+    imageUrl: "/images/categories/accessories.jpg",
+    slug: "accessories"
+  },
+  {
+    id: 6,
+    name: "Bộ sưu tập",
+    description: "Các bộ sưu tập thời trang mới nhất",
+    imageUrl: "/images/categories/collections.jpg",
+    slug: "collections"
   }
 ];
 
 export async function GET() {
   try {
-    return NextResponse.json({
-      success: true,
-      message: 'Categories fetched successfully',
-      data: categories
-    });
+    // In a real application, you would fetch this data from a database
+    return NextResponse.json(categories);
   } catch (error) {
+    console.error('Error fetching categories:', error);
     return NextResponse.json(
-      {
-        success: false,
-        message: 'Failed to fetch categories',
-        data: null
-      },
+      { error: 'Failed to fetch categories' },
       { status: 500 }
     );
   }
