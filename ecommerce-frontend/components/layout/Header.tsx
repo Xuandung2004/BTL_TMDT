@@ -1,17 +1,33 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FiSearch, FiShoppingCart, FiUser } from 'react-icons/fi';
+import { fetchCurrentUser } from '@/app/services/api';
 
 const Header = () => {
+  const [user, setUser] = useState<{ username: string } | null>(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const response = await fetchCurrentUser();
+        setUser(response.data);
+      } catch (err) {
+        setUser(null);
+      }
+    };
+
+    loadUser();
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 bg-[#FFB629]">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="text-2xl font-bold text-gray-900">
-            Clore
+            LazyShop
           </Link>
 
           {/* Search */}
@@ -31,8 +47,8 @@ const Header = () => {
             <Link href="/categories" className="text-gray-900 hover:text-gray-700 font-medium">
               Categories
             </Link>
-            <Link href="/new-arrivals" className="text-gray-900 hover:text-gray-700 font-medium">
-              New Arrivals
+            <Link href="/product" className="text-gray-900 hover:text-gray-700 font-medium">
+              Products
             </Link>
             <Link href="/deals" className="text-gray-900 hover:text-gray-700 font-medium">
               Deals
@@ -41,15 +57,22 @@ const Header = () => {
 
           {/* Icons */}
           <div className="flex items-center space-x-4">
-            <button className="p-2 text-gray-900 hover:bg-gray-900/10 rounded-full">
-              <FiUser size={20} />
-            </button>
-            <button className="p-2 text-gray-900 hover:bg-gray-900/10 rounded-full relative">
+            {user ? (
+              <span className="text-gray-900 font-medium">
+                Hello, {user.username}
+              </span>
+            ) : (
+              <Link href="/login" className="p-2 text-gray-900 hover:bg-gray-900/10 rounded-full">
+                <FiUser size={20} />
+              </Link>
+            )}
+
+            <Link href="cart" className="p-2 text-gray-900 hover:bg-gray-900/10 rounded-full relative">
               <FiShoppingCart size={20} />
               <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
                 0
               </span>
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -57,4 +80,4 @@ const Header = () => {
   );
 };
 
-export default Header; 
+export default Header;

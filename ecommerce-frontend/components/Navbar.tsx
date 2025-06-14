@@ -1,14 +1,22 @@
-export default function Navbar(){
-    return (
-        <div className="bg-gray-800 text-white p-4 flex justify-between">
-            {/* Logo */}
-            <div className="text-lg font-bold">Logo</div>
-
-            {/* Các liên kết */}
-            <div>
-                <a href="/" className="mr-4">Trang chủ</a>
-                <a href="/admin" className="mr-4">Quản trị</a>
-            </div>
+export default function Navbar() {
+  return (
+    <nav className="bg-gray-900 text-white px-6 py-4 shadow-lg">
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        {/* Logo */}
+        <div className="text-2xl font-extrabold tracking-wide text-blue-400">
+          🛒 LazyShop
         </div>
-    )
+
+        {/* Links */}
+        <div className="flex items-center space-x-6 text-sm font-medium">
+          <a
+            href="/"
+            className="hover:text-blue-400 transition duration-200"
+          >
+            Trang chủ
+          </a>
+        </div>
+      </div>
+    </nav>
+  );
 }

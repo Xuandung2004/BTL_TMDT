@@ -14,9 +14,8 @@ public class OrderController : ControllerBase
         _context = context;
     }
 
-    // Admin: xem tất cả đơn hàng
-    [HttpGet]
-    [Authorize(Roles = "Admin")]
+    // xem tất cả đơn hàng
+    [HttpGet("getAll")]
     public async Task<IActionResult> GetAllOrders()
     {
         var orders = await _context.Orders
@@ -109,7 +108,6 @@ public class OrderController : ControllerBase
 
     // Admin: xóa đơn hàng
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteOrder(int id)
     {
         var order = await _context.Orders.FindAsync(id);

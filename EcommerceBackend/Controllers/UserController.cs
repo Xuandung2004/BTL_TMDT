@@ -11,7 +11,8 @@ namespace Controllers{
     {
         private readonly AppDbContext _context;
 
-        public UserController(AppDbContext context){
+        public UserController(AppDbContext context)
+        {
             _context = context;
         }
 
@@ -25,7 +26,8 @@ namespace Controllers{
                 u => u.Username == request.Username))
                 return BadRequest("Username đã tồn tại.");
 
-            var user = new User{
+            var user = new User
+            {
                 Username = request.Username,
                 Password = BCrypt.Net.BCrypt.HashPassword(
                                         request.Password),
@@ -38,13 +40,14 @@ namespace Controllers{
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetUser), 
-                            new {id = user.Id}, user);   
+            return CreatedAtAction(nameof(GetUser),
+                            new { id = user.Id }, user);
         }
 
         //Lấy người dùng
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id){
+        public async Task<ActionResult<User>> GetUser(int id)
+        {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
                 return NotFound();
@@ -66,6 +69,27 @@ namespace Controllers{
                 return NotFound();
 
             return user;
+        }
+        //Lấy tất cả user
+        [HttpGet("getAll")]
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+        {
+            var users = await _context.Users.ToListAsync();
+            return Ok(users);
+        }
+
+        //Xóa user
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return NotFound("Không tìm thấy người dùng.");
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 

@@ -101,5 +101,40 @@ export const logout = () => {
   localStorage.removeItem('token');
 };
 
+//quản lý users
+// Lấy danh sách tất cả người dùng
+export const fetchAllUsers = () => {
+  return API.get('/users/getAll', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
+// Xoá người dùng theo ID (chỉ admin)
+export const deleteUser = (id: number) => {
+  return API.delete(`/users/${id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
+
+// quản lý đơn hàng
+// Lấy tất cả đơn hàng
+export const fetchAllOrder = () => {
+  return API.get('/Order/getAll', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
+// Xoá người dùng theo ID (chỉ admin)
+export const deleteOrder = (id: number) => {
+  return API.delete(`/Order/${id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
 
 export default API;
