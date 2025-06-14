@@ -53,7 +53,7 @@ const Header = () => {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search for products..."
+                placeholder="Tìm kiếm sản phẩm..."
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
               />
               <FiSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
@@ -67,16 +67,16 @@ const Header = () => {
                 className="flex items-center space-x-1 text-gray-900 hover:text-gray-700 font-medium"
                 onClick={() => setShowCategories(!showCategories)}
               >
-                <span>Categories</span>
+                <span>Danh mục</span>
                 <FiChevronDown className={`transition-transform duration-200 ${showCategories ? 'rotate-180' : ''}`} />
               </button>
               {showCategories && <CategoryList categories={categories} />}
             </div>
             <Link href="/products" className="text-gray-900 hover:text-gray-700 font-medium">
-              Products
+              Sản phẩm
             </Link>
             <Link href="/deals" className="text-gray-900 hover:text-gray-700 font-medium">
-              Deals
+              Khuyến mãi
             </Link>
           </nav>
 
