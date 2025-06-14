@@ -12,7 +12,12 @@ const products = {
       slug: "ao-thun-basic",
       brand: "Local Brand",
       rating: 4.5,
-      createdAt: "2024-03-20"
+      createdAt: "2024-03-20",
+      category: {
+        id: 1,
+        name: "Áo",
+        slug: "tops"
+      }
     },
     {
       id: 2,
@@ -23,7 +28,12 @@ const products = {
       slug: "ao-so-mi-trang",
       brand: "Premium",
       rating: 4.8,
-      createdAt: "2024-03-19"
+      createdAt: "2024-03-19",
+      category: {
+        id: 1,
+        name: "Áo",
+        slug: "tops"
+      }
     }
   ],
   bottoms: [
@@ -36,7 +46,12 @@ const products = {
       slug: "quan-jean-slim-fit",
       brand: "Denim",
       rating: 4.6,
-      createdAt: "2024-03-18"
+      createdAt: "2024-03-18",
+      category: {
+        id: 2,
+        name: "Quần",
+        slug: "bottoms"
+      }
     }
   ],
   dresses: [
@@ -49,7 +64,12 @@ const products = {
       slug: "dam-suong-du-tiec",
       brand: "Luxury",
       rating: 4.9,
-      createdAt: "2024-03-17"
+      createdAt: "2024-03-17",
+      category: {
+        id: 3,
+        name: "Đầm",
+        slug: "dresses"
+      }
     }
   ],
   sportswear: [

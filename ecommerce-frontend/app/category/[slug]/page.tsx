@@ -14,6 +14,15 @@ interface Product {
   price: number;
   imageUrl: string;
   slug: string;
+  rating: number;
+  brand: string;
+  createdAt: string;
+  discountPrice?: number;
+  category: {
+    id: number;
+    name: string;
+    slug: string;
+  };
 }
 
 interface Category {
