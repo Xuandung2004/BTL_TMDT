@@ -7,11 +7,13 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { FiShoppingCart, FiHeart } from 'react-icons/fi';
 import { FaHeart } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 const TrendingCollection = () => {
+  const router = useRouter();
   const [likedProducts, setLikedProducts] = useState<number[]>([]);
 
   const products = [
@@ -67,6 +69,10 @@ const TrendingCollection = () => {
     );
   };
 
+  const navigateToProduct = (slug: string) => {
+    router.push(`/product/${slug}`);
+  };
+
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="flex justify-between items-center mb-8">
@@ -97,7 +103,10 @@ const TrendingCollection = () => {
         {products.map((product) => (
           <SwiperSlide key={product.id}>
             <div className="group relative">
-              <Link href={`/product/${product.slug}`} className="block">
+              <div 
+                onClick={() => navigateToProduct(product.slug)}
+                className="cursor-pointer"
+              >
                 <div className="relative aspect-[3/4] overflow-hidden rounded-lg mb-4">
                   <img
                     src={product.image}
@@ -107,7 +116,7 @@ const TrendingCollection = () => {
                   <div className="absolute top-4 right-4 space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button 
                       onClick={(e) => {
-                        e.preventDefault();
+                        e.stopPropagation();
                         handleLikeProduct(product.id);
                       }}
                       className="bg-white p-2 rounded-full shadow-md hover:bg-[#FFB629] hover:text-white transition-colors"
@@ -120,13 +129,16 @@ const TrendingCollection = () => {
                     </button>
                   </div>
                   <div className="absolute bottom-4 left-4 right-4">
-                    <Link 
-                      href={`/product/${product.slug}`}
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigateToProduct(product.slug);
+                      }}
                       className="w-full bg-white text-gray-900 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2 hover:bg-[#FFB629] hover:text-white font-medium"
                     >
                       <FiShoppingCart />
                       Xem chi tiết
-                    </Link>
+                    </button>
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2 text-gray-900 group-hover:text-[#FFB629] transition-colors">
@@ -138,7 +150,7 @@ const TrendingCollection = () => {
                     currency: 'VND'
                   }).format(product.price)}
                 </p>
-              </Link>
+              </div>
             </div>
           </SwiperSlide>
         ))}
