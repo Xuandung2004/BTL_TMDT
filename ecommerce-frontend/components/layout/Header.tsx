@@ -10,6 +10,13 @@ const Header = () => {
   const [user, setUser] = useState<{ username: string } | null>(null);
   const [cartCount, setCartCount] = useState(0);
   const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState('');
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchTerm)}`);
+    }
+  };
 
   useEffect(() => {
     const loadUser = async () => {
@@ -52,16 +59,20 @@ const Header = () => {
           </Link>
 
           {/* Search */}
-          <div className="flex-1 max-w-xl mx-8">
+          <form onSubmit={handleSearchSubmit} className="flex-1 max-w-xl mx-8">
             <div className="relative">
               <input
                 type="text"
                 placeholder="Search for products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
               />
-              <FiSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+              <button type="submit" className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                <FiSearch />
+              </button>
             </div>
-          </div>
+          </form>
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">

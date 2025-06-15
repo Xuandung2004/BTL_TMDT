@@ -161,4 +161,8 @@ export const deleteOrder = (id: number) => {
   });
 };
 
+// Thêm hàm gửi đơn hàng
+// Gửi đơn hàng
+export const submitOrder = () => API.post('/order');
+
 export default API;
