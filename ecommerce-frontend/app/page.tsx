@@ -2,8 +2,6 @@ import React from 'react';
 import Header from '@/components/layout/Header';
 import HeroBanner from '@/components/home/HeroBanner';
 import Services from '@/components/home/Services';
-import PromoBanners from '@/components/home/PromoBanners';
-import PopularCategories from '@/components/home/PopularCategories';
 import TrendingCollection from '@/components/home/TrendingCollection';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import WeeklyBestSell from '@/components/home/WeeklyBestSell';
@@ -15,8 +13,6 @@ export default function Home() {
       <Header />
       <HeroBanner />
       <Services />
-      <PromoBanners />
-      <PopularCategories />
       <TrendingCollection />
       <FeaturedProducts />
       <WeeklyBestSell />

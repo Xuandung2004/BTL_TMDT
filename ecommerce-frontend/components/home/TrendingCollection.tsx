@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -11,55 +11,32 @@ import { useRouter } from 'next/navigation';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import type { Product } from '@/types';
+import { fetchProducts } from '@/app/services/api';
 
 const TrendingCollection = () => {
   const router = useRouter();
   const [likedProducts, setLikedProducts] = useState<number[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const products = [
-    {
-      id: 1,
-      name: "Áo Sơ Mi Lụa Dài Tay",
-      image: "https://images.unsplash.com/photo-1604695573706-53170668f6a6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-      price: 550000,
-      slug: "ao-so-mi-lua-dai-tay"
-    },
-    {
-      id: 2,
-      name: "Áo Khoác Bomber Nữ",
-      image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-      price: 750000,
-      slug: "ao-khoac-bomber-nu"
-    },
-    {
-      id: 3,
-      name: "Đầm Suông Công Sở",
-      image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-      price: 650000,
-      slug: "dam-suong-cong-so"
-    },
-    {
-      id: 4,
-      name: "Set Áo Vest & Quần Âu",
-      image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-      price: 1250000,
-      slug: "set-ao-vest-quan-au"
-    },
-    {
-      id: 5,
-      name: "Áo Blazer Dáng Suông",
-      image: "https://images.unsplash.com/photo-1591369822096-ffd140ec948f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-      price: 850000,
-      slug: "ao-blazer-dang-suong"
-    },
-    {
-      id: 6,
-      name: "Chân Váy Xếp Ly",
-      image: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-      price: 450000,
-      slug: "chan-vay-xep-ly"
-    }
-  ];
+  useEffect(() => {
+    const getProducts = async () => {
+      try {
+        const response = await fetchProducts();
+        // Lấy 6 sản phẩm mới nhất
+        setProducts(response.data.slice(0, 6));
+      } catch (err) {
+        setError('Failed to fetch products');
+        console.error('Error:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getProducts();
+  }, []);
 
   const handleLikeProduct = (productId: number) => {
     setLikedProducts(prev => 
@@ -72,6 +49,36 @@ const TrendingCollection = () => {
   const navigateToProduct = (slug: string) => {
     router.push(`/product/${slug}`);
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">Bộ Sưu Tập Mới</h2>
+          <Link href="/collections" className="text-gray-900 hover:text-[#FFB629] font-medium">
+            Xem tất cả
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="animate-pulse">
+              <div className="bg-gray-200 aspect-[3/4] rounded-lg mb-4"></div>
+              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center text-red-500">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -103,22 +110,16 @@ const TrendingCollection = () => {
         {products.map((product) => (
           <SwiperSlide key={product.id}>
             <div className="group relative">
-              <div 
-                onClick={() => navigateToProduct(product.slug)}
-                className="cursor-pointer"
-              >
+              <div className="block">
                 <div className="relative aspect-[3/4] overflow-hidden rounded-lg mb-4">
                   <img
-                    src={product.image}
+                    src={product.imageUrl}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-4 right-4 space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleLikeProduct(product.id);
-                      }}
+                      onClick={() => handleLikeProduct(product.id)}
                       className="bg-white p-2 rounded-full shadow-md hover:bg-[#FFB629] hover:text-white transition-colors"
                     >
                       {likedProducts.includes(product.id) ? (
@@ -129,27 +130,26 @@ const TrendingCollection = () => {
                     </button>
                   </div>
                   <div className="absolute bottom-4 left-4 right-4">
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigateToProduct(product.slug);
-                      }}
+                    <Link 
+                      href={`/product/${product.slug}`}
                       className="w-full bg-white text-gray-900 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2 hover:bg-[#FFB629] hover:text-white font-medium"
                     >
                       <FiShoppingCart />
                       Xem chi tiết
-                    </button>
+                    </Link>
                   </div>
                 </div>
-                <h3 className="text-lg font-bold mb-2 text-gray-900 group-hover:text-[#FFB629] transition-colors">
-                  {product.name}
-                </h3>
-                <p className="text-gray-900 font-semibold">
-                  {new Intl.NumberFormat('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND'
-                  }).format(product.price)}
-                </p>
+                <Link href={`/product/${product.slug}`}>
+                  <h3 className="text-lg font-bold mb-2 text-gray-900 group-hover:text-[#FFB629] transition-colors">
+                    {product.name}
+                  </h3>
+                  <p className="text-gray-900 font-semibold">
+                    {new Intl.NumberFormat('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND'
+                    }).format(product.price)}
+                  </p>
+                </Link>
               </div>
             </div>
           </SwiperSlide>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -9,47 +9,31 @@ import { FaHeart } from 'react-icons/fa';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import type { Product } from '@/types';
+import { fetchProducts } from '@/app/services/api';
 
 const WeeklyBestSell = () => {
   const [likedProducts, setLikedProducts] = useState<number[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const products = [
-    {
-      id: 1,
-      name: "Áo Khoác Bomber Thời Trang",
-      image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-      price: 650000,
-      slug: "ao-khoac-bomber-thoi-trang"
-    },
-    {
-      id: 2,
-      name: "Áo Sơ Mi Họa Tiết",
-      image: "https://images.unsplash.com/photo-1604695573706-53170668f6a6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-      price: 450000,
-      slug: "ao-so-mi-hoa-tiet"
-    },
-    {
-      id: 3,
-      name: "Quần Jean Slim Fit",
-      image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-      price: 550000,
-      slug: "quan-jean-slim-fit"
-    },
-    {
-      id: 4,
-      name: "Áo Khoác Dù Unisex",
-      image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-      price: 480000,
-      slug: "ao-khoac-du-unisex"
-    },
-    {
-      id: 5,
-      name: "Áo Polo Cotton",
-      image: "https://images.unsplash.com/photo-1598554747436-c9293d6a588f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-      price: 350000,
-      slug: "ao-polo-cotton"
-    }
-  ];
+  useEffect(() => {
+    const getProducts = async () => {
+      try {
+        const response = await fetchProducts();
+        // Lấy 5 sản phẩm bán chạy nhất (giả sử sắp xếp theo số lượng đã bán)
+        setProducts(response.data.slice(0, 5));
+      } catch (err) {
+        setError('Failed to fetch products');
+        console.error('Error:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getProducts();
+  }, []);
 
   const handleLikeProduct = (productId: number) => {
     setLikedProducts(prev => 
@@ -58,6 +42,36 @@ const WeeklyBestSell = () => {
         : [...prev, productId]
     );
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">Sản Phẩm Bán Chạy</h2>
+          <Link href="/products" className="text-gray-900 hover:text-[#FFB629] font-medium">
+            Xem tất cả
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="animate-pulse">
+              <div className="bg-gray-200 aspect-[3/4] rounded-lg mb-4"></div>
+              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center text-red-500">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -89,19 +103,16 @@ const WeeklyBestSell = () => {
         {products.map((product) => (
           <SwiperSlide key={product.id}>
             <div className="group relative">
-              <Link href={`/product/${product.slug}`} className="block">
+              <div className="block">
                 <div className="relative aspect-[3/4] overflow-hidden rounded-lg mb-4">
                   <img
-                    src={product.image}
+                    src={product.imageUrl}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-4 right-4 space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleLikeProduct(product.id);
-                      }}
+                      onClick={() => handleLikeProduct(product.id)}
                       className="bg-white p-2 rounded-full shadow-md hover:bg-[#FFB629] hover:text-white transition-colors"
                     >
                       {likedProducts.includes(product.id) ? (
@@ -121,16 +132,18 @@ const WeeklyBestSell = () => {
                     </Link>
                   </div>
                 </div>
-                <h3 className="text-lg font-bold mb-2 text-gray-900 group-hover:text-[#FFB629] transition-colors">
-                  {product.name}
-                </h3>
-                <p className="text-gray-900 font-semibold">
-                  {new Intl.NumberFormat('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND'
-                  }).format(product.price)}
-                </p>
-              </Link>
+                <Link href={`/product/${product.slug}`}>
+                  <h3 className="text-lg font-bold mb-2 text-gray-900 group-hover:text-[#FFB629] transition-colors">
+                    {product.name}
+                  </h3>
+                  <p className="text-gray-900 font-semibold">
+                    {new Intl.NumberFormat('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND'
+                    }).format(product.price)}
+                  </p>
+                </Link>
+              </div>
             </div>
           </SwiperSlide>
         ))}

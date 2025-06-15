@@ -183,20 +183,5 @@ export const fetchAdminDashboard = () => {
   }).then(res => res.data);
 };
 
-// Lấy chi tiết đơn hàng theo ID (dùng cho admin)
-export const fetchOrderById = (orderId: number) => {
-  return API.get(`/orderdetails/order/${orderId}`);
-};
-
-// Lấy chi tiết đơn hàng cho người dùng hiện tại (bảo vệ bằng token)
-export const fetchUserOrderById = (orderId: number) => {
-  return API.get(`/orderdetails/user/${orderId}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`
-    }
-  });
-};
-
-
 
 export default API;
