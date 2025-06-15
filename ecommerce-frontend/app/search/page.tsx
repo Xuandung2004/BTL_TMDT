@@ -6,7 +6,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import ProductFilters from '@/components/products/ProductFilters'; 
 
 type SortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc';
 
