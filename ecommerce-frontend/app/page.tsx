@@ -7,6 +7,7 @@ import PopularCategories from '@/components/home/PopularCategories';
 import TrendingCollection from '@/components/home/TrendingCollection';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import WeeklyBestSell from '@/components/home/WeeklyBestSell';
+import Footer from '@/components/layout/Footer';
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
       <TrendingCollection />
       <FeaturedProducts />
       <WeeklyBestSell />
+      <Footer />
     </main>
   );
 }

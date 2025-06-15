@@ -9,12 +9,12 @@ export const fetchCategories = () => API.get('/categories');
 
 //API tạo mới nhóm sản phẩm
 export const createCategory = (
-  data: {name: String, description: String}) => API.post(
+  data: { name: String, description: String }) => API.post(
     '/categories', data);
 
 //API sửa nhóm sản phẩm
-export const updateCategory = (id: number, 
-  data : {name: String, description: String}) => API.put(
+export const updateCategory = (id: number,
+  data: { name: String, description: String }) => API.put(
     `/categories/${id}`, data);
 
 //API xóa nhóm sản phẩm
@@ -28,13 +28,14 @@ export const deleteCategory = (id: number) => API.delete(
 export const fetchProducts = () => API.get("/products", {
   headers: {
     'Content-Type': 'application/json',  // Đảm bảo gửi header hợp lệ
-  },});
+  },
+});
 export const createProduct = (data: any) =>
-                  API.post("/products", data);
-export const updateProduct = (id: number, data: any) => 
-                  API.put(`/products/${id}`, data);
-export const deleteProduct = (id: number) => 
-                  API.delete(`/products/${id}`);
+  API.post("/products", data);
+export const updateProduct = (id: number, data: any) =>
+  API.put(`/products/${id}`, data);
+export const deleteProduct = (id: number) =>
+  API.delete(`/products/${id}`);
 
 
 // Upload image
@@ -48,12 +49,12 @@ export const uploadImage = (file: File) => {
 
 //Xử lý đăng nhập
 export const login = (username: string, password: string) => {
-  return API.post("/auth/login", {username, password});
+  return API.post("/auth/login", { username, password });
 }
 
 //Xử lý giỏ hàng
 //Thêm sản phẩm vào giỏ
-export const addToCart = (data: {productId: number, quantity: number}) => {
+export const addToCart = (data: { productId: number, quantity: number }) => {
   return API.post("/cart/add", data, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -72,7 +73,7 @@ export const fetchCart = () => {
 
 //Cập nhật số lượng sản phẩm trong giỏ
 export const updateCartItem = (productId: number, quantity: number) => {
-  return API.put('/cart/update-quantity', {productId: productId, quantity}, {
+  return API.put('/cart/update-quantity', { productId: productId, quantity }, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('token')}`
     }
@@ -118,6 +119,29 @@ export const deleteUser = (id: number) => {
     }
   });
 };
+// Đăng ký tài khoản mới
+export const registerUser = (data: {
+  username: string;
+  password: string;
+  fullName: string;
+  phone: string;
+}) => API.post("/users", data);
+// Đổi mật khẩu user
+export const changeUserPassword = (
+  id: number,
+  data: { oldPassword: string; newPassword: string }
+) => API.post(`/users/${id}/change-password`, data, {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem('token')}`
+  }
+});
+// Lấy thông tin user theo id
+export const fetchUserById = (id: number) => API.get(`/users/${id}`);
+// Sửa thông tin user (admin)
+export const updateUser = (
+  id: number,
+  data: { fullName?: string; phone?: string; isActive?: boolean }
+) => API.put(`/users/${id}`, data);
 
 // quản lý đơn hàng
 // Lấy tất cả đơn hàng
