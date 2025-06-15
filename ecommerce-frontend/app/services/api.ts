@@ -154,7 +154,7 @@ export const fetchAllOrder = () => {
 };
 // Xoá người dùng theo ID (chỉ admin)
 export const deleteOrder = (id: number) => {
-  return API.delete(`/Order/${id}`, {
+  return API.delete(`/users/${id}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('token')}`
     }
@@ -163,6 +163,21 @@ export const deleteOrder = (id: number) => {
 
 // Thêm hàm gửi đơn hàng
 // Gửi đơn hàng
-export const submitOrder = () => API.post('/order');
+export const submitOrder = () => {
+  return API.post(`/Order/`, null, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
+
+// thống kê báo cáo
+export const fetchAdminDashboard = () => {
+  return API.get('/admin/dashboard', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    }
+  }).then(res => res.data);
+};
 
 export default API;

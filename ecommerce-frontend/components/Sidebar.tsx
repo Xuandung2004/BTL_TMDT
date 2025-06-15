@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaBoxes, FaTags, FaUsers, FaClipboardList } from "react-icons/fa";
+import { FaBoxes, FaTags, FaUsers, FaClipboardList, FaChartBar } from "react-icons/fa";
 
 const menuItems = [
   { href: "/admin/categories", icon: <FaTags />, label: "Nhóm sản phẩm" },
   { href: "/admin/products", icon: <FaBoxes />, label: "Sản phẩm" },
   { href: "/admin/users", icon: <FaUsers />, label: "Người dùng" },
   { href: "/admin/orders", icon: <FaClipboardList />, label: "Đơn hàng" },
+  { href: "/admin/report", icon: <FaChartBar />, label: "Thống kê báo cáo" },
 ];
 
 export default function Sidebar() {
@@ -21,6 +22,7 @@ export default function Sidebar() {
           <h2 className="text-2xl font-bold text-center tracking-wide">🛠️ Admin Panel</h2>
         </Link>
       </div>
+
       <ul className="flex-1 p-4 space-y-2">
         {menuItems.map(({ href, icon, label }) => {
           const isActive = pathname.startsWith(href);
@@ -41,6 +43,7 @@ export default function Sidebar() {
           );
         })}
       </ul>
+
       <div className="p-4 text-sm text-center text-gray-400 border-t border-gray-700">
         &copy; {new Date().getFullYear()} Hệ thống quản lý
       </div>

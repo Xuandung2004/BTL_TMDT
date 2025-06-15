@@ -34,6 +34,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     const loadCart = async () => {
+      console.log('Token:', localStorage.getItem('token'));
       try {
         setLoadingCart(true);
         const res = await fetchCart();
@@ -85,12 +86,14 @@ export default function CheckoutPage() {
 
     setSubmitting(true);
     try {
-      await submitOrder(); // Backend xử lý đơn hàng dựa trên userId và giỏ hàng
+      await submitOrder();
       setOrderSuccess(true);
-    } catch (err) {
-      alert('Lỗi khi gửi đơn hàng.');
-    } finally {
-      setSubmitting(false);
+    } catch (err: any) {
+      if (err.response && err.response.data === 'Giỏ hàng trống.') {
+        alert('Giỏ hàng đang trống, không thể thanh toán.');
+      } else {
+        alert('Lỗi khi gửi đơn hàng. Vui lòng thử lại sau.');
+      }
     }
   };
 
@@ -102,7 +105,7 @@ export default function CheckoutPage() {
         <h1 className="text-4xl font-extrabold text-green-600 mb-6">🎉 Đặt hàng thành công!</h1>
         <p className="text-lg mb-6">Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ sớm.</p>
         <Link
-          href="/products"
+          href="/product"
           className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded transition"
         >
           Tiếp tục mua sắm

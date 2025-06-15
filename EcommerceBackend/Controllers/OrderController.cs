@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Models;
 
 [Route("api/[controller]")]
@@ -14,8 +16,9 @@ public class OrderController : ControllerBase
         _context = context;
     }
 
-    // xem tất cả đơn hàng
+    // Admin: Xem tất cả đơn hàng
     [HttpGet("getAll")]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> GetAllOrders()
     {
         var orders = await _context.Orders
@@ -26,12 +29,12 @@ public class OrderController : ControllerBase
         return Ok(orders);
     }
 
-    // User: xem đơn hàng của chính mình
+    // User: Xem đơn hàng của chính mình
     [HttpGet("user")]
     [Authorize]
     public async Task<IActionResult> GetUserOrders()
     {
-        var userId = int.Parse(User.FindFirst("UserId").Value);
+        var userId = GetUserIdFromClaims();
         var orders = await _context.Orders
             .Where(o => o.UserId == userId)
             .Include(o => o.OrderDetails)
@@ -40,7 +43,7 @@ public class OrderController : ControllerBase
         return Ok(orders);
     }
 
-    // Lấy đơn hàng theo id
+    // Lấy đơn hàng theo ID
     [HttpGet("{id}")]
     [Authorize]
     public async Task<IActionResult> GetOrderById(int id)
@@ -52,13 +55,11 @@ public class OrderController : ControllerBase
 
         if (order == null) return NotFound();
 
-        var userId = int.Parse(User.FindFirst("UserId").Value);
-        var isAdmin = User.IsInRole("Admin");
+        var userId = GetUserIdFromClaims();
+        var isAdmin = User.IsInRole("admin");
 
         if (!isAdmin && order.UserId != userId)
-        {
             return Forbid();
-        }
 
         return Ok(order);
     }
@@ -68,46 +69,64 @@ public class OrderController : ControllerBase
     [Authorize]
     public async Task<IActionResult> CreateOrder()
     {
-        var userId = int.Parse(User.FindFirst("UserId").Value);
-        var cartItems = await _context.Carts
-            .Include(c => c.Product)
-            .Where(c => c.UserId == userId)
-            .ToListAsync();
-
-        if (!cartItems.Any()) return BadRequest("Giỏ hàng trống.");
-
-        var total = cartItems.Sum(item => item.Product.Price * item.Quantity);
-
-        var newOrder = new Order
+        try
         {
-            UserId = userId,
-            TotalAmount = total,
-            OrderDate = DateTime.Now
-        };
+            var userId = GetUserIdFromClaims();
 
-        _context.Orders.Add(newOrder);
-        await _context.SaveChangesAsync();
+            var cartItems = await _context.Carts
+                .Include(c => c.Product)
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
 
-        foreach (var item in cartItems)
-        {
-            var detail = new OrderDetail
+            if (!cartItems.Any())
+                return BadRequest("Giỏ hàng trống.");
+
+            if (cartItems.Any(item => item.Product == null))
+                return BadRequest("Một số sản phẩm không còn tồn tại.");
+
+            var total = cartItems.Sum(item => item.Product.Price * item.Quantity);
+
+            var newOrder = new Order
             {
-                OrderId = newOrder.OrderId,
-                ProductId = item.ProductId,
-                Quantity = item.Quantity,
-                UnitPrice = item.Product.Price
+                UserId = userId,
+                TotalAmount = total,
+                OrderDate = DateTime.Now
             };
-            _context.OrderDetails.Add(detail);
+
+            _context.Orders.Add(newOrder);
+            await _context.SaveChangesAsync();
+
+            foreach (var item in cartItems)
+            {
+                var detail = new OrderDetail
+                {
+                    OrderId = newOrder.OrderId,
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    UnitPrice = item.Product.Price
+                };
+                _context.OrderDetails.Add(detail);
+            }
+
+            _context.Carts.RemoveRange(cartItems);
+            await _context.SaveChangesAsync();
+
+            return Ok(newOrder);
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine("🔥 LỖI TẠI CREATE ORDER:");
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
 
-        _context.Carts.RemoveRange(cartItems);
-        await _context.SaveChangesAsync();
-
-        return Ok(newOrder);
+            return StatusCode(500, "Lỗi server nội bộ: " + ex.Message);
+        }
     }
 
-    // Admin: xóa đơn hàng
+
+    // Admin: Xoá đơn hàng
     [HttpDelete("{id}")]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> DeleteOrder(int id)
     {
         var order = await _context.Orders.FindAsync(id);
@@ -119,5 +138,13 @@ public class OrderController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    // 📌 Hàm tiện ích: Lấy userId từ token
+    private int GetUserIdFromClaims()
+    {
+        var subClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
+                    ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return int.TryParse(subClaim, out var userId) ? userId : 0;
     }
 }
