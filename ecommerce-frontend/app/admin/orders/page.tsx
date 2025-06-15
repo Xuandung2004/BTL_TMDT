@@ -2,10 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { fetchAllOrder, deleteOrder } from '@/app/services/api';
+import { useRouter } from 'next/navigation';
 
 export default function OrderPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   // Gọi API lấy tất cả đơn hàng
   const loadOrders = async () => {
@@ -25,13 +27,18 @@ export default function OrderPage() {
 
   // Hàm xoá đơn hàng
   const handleDelete = async (orderId: number) => {
-    if (!confirm('Anh có chắc chắn muốn xoá đơn hàng này không? 😥')) return;
+    if (!confirm('Bạn có chắc chắn muốn xoá đơn hàng này không? 😥')) return;
     try {
       await deleteOrder(orderId);
       await loadOrders(); // Load lại danh sách
     } catch (err) {
       console.error('Lỗi xoá đơn hàng:', err);
     }
+  };
+
+  // Điều hướng đến trang xem chi tiết
+  const handleViewDetails = (orderId: number) => {
+    router.push(`/admin/orderdetails/${orderId}`);
   };
 
   return (
@@ -63,9 +70,15 @@ export default function OrderPage() {
                   <td className="px-4 py-2">{order.totalAmount?.toLocaleString()}₫</td>
                   <td className="px-4 py-2">{new Date(order.createdAt).toLocaleDateString()}</td>
                   <td className="px-4 py-2">{order.status || 'Chưa cập nhật'}</td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-2 space-x-3">
                     <button
-                      onClick={() => handleDelete(order.id)}
+                      onClick={() => handleViewDetails(order.orderId)}
+                      className="text-blue-600 hover:underline font-medium"
+                    >
+                      👁️ Xem
+                    </button>
+                    <button
+                      onClick={() => handleDelete(order.orderId)}
                       className="text-red-600 hover:underline font-medium"
                     >
                       🗑️ Xoá

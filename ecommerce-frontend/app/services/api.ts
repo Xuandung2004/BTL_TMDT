@@ -36,7 +36,10 @@ export const updateProduct = (id: number, data: any) =>
   API.put(`/products/${id}`, data);
 export const deleteProduct = (id: number) =>
   API.delete(`/products/${id}`);
-
+// Lấy sản phẩm theo nhóm sản phẩm (CategoryId)
+export const fetchProductsByCategory = (categoryId: number) => {
+  return API.get(`/products/by-category/${categoryId}`);
+};
 
 // Upload image
 export const uploadImage = (file: File) => {
@@ -179,5 +182,21 @@ export const fetchAdminDashboard = () => {
     }
   }).then(res => res.data);
 };
+
+// Lấy chi tiết đơn hàng theo ID (dùng cho admin)
+export const fetchOrderById = (orderId: number) => {
+  return API.get(`/orderdetails/order/${orderId}`);
+};
+
+// Lấy chi tiết đơn hàng cho người dùng hiện tại (bảo vệ bằng token)
+export const fetchUserOrderById = (orderId: number) => {
+  return API.get(`/orderdetails/user/${orderId}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  });
+};
+
+
 
 export default API;

@@ -109,5 +109,20 @@ namespace Controllers
 
             return Ok(new { message = "Xóa sản phẩm thành công." });
         }
+        // GET: api/products/by-category/{categoryId}
+        [HttpGet("by-category/{categoryId}")]
+        public async Task<IActionResult> GetByCategory(int categoryId)
+        {
+            var products = await _context.Products
+                .Where(p => p.CategoryId == categoryId)
+                .Include(p => p.Category)
+                .OrderByDescending(p => p.Id)
+                .ToListAsync();
+
+            if (products == null || !products.Any())
+                return NotFound(new { message = "Không tìm thấy sản phẩm nào trong nhóm này." });
+
+            return Ok(products);
+        }
     }
 }

@@ -18,7 +18,6 @@ public class OrderController : ControllerBase
 
     // Admin: Xem tất cả đơn hàng
     [HttpGet("getAll")]
-    [Authorize(Roles = "admin")]
     public async Task<IActionResult> GetAllOrders()
     {
         var orders = await _context.Orders
@@ -45,7 +44,6 @@ public class OrderController : ControllerBase
 
     // Lấy đơn hàng theo ID
     [HttpGet("{id}")]
-    [Authorize]
     public async Task<IActionResult> GetOrderById(int id)
     {
         var order = await _context.Orders
@@ -56,9 +54,7 @@ public class OrderController : ControllerBase
         if (order == null) return NotFound();
 
         var userId = GetUserIdFromClaims();
-        var isAdmin = User.IsInRole("admin");
-
-        if (!isAdmin && order.UserId != userId)
+        if (order.UserId != userId)
             return Forbid();
 
         return Ok(order);
