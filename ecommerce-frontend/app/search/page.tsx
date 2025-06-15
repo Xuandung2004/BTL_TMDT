@@ -105,11 +105,17 @@ export default function SearchResultsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white py-10 px-6">
+  <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-gray-800">
+            <a className="text-orange-500" > Giỏ hàng </a>
+          </h1>
+          <div/>
+          <Link href="/" className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow font-medium flex items-center gap-2">
+           Trang chủ
+          </Link>
+        </div>
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
-        {/* Bộ lọc bên trái */}
-        <aside className="lg:w-80 bg-white rounded-lg shadow-md p-6 sticky top-20 self-start">
-          <ProductFilters onFilterChange={setFilters} />
-        </aside>
+        
 
         {/* Phần kết quả tìm kiếm */}
         <section className="flex-1">
