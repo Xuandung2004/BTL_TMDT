@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { fetchCart, submitOrder } from '../services/api';
+import { fetchCart, submitOrder, createPayment } from '@/app/services/api';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface FormData {
   fullName: string;
@@ -14,6 +15,7 @@ interface FormData {
 }
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [loadingCart, setLoadingCart] = useState(true);
   const [errorCart, setErrorCart] = useState<string | null>(null);
@@ -25,7 +27,7 @@ export default function CheckoutPage() {
     phone: '',
     address: '',
     note: '',
-    paymentMethod: 'cod', // default: Cash on Delivery
+    paymentMethod: 'cod',
   });
 
   const [formErrors, setFormErrors] = useState<Partial<FormData>>({});
@@ -34,7 +36,6 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     const loadCart = async () => {
-      console.log('Token:', localStorage.getItem('token'));
       try {
         setLoadingCart(true);
         const res = await fetchCart();
@@ -86,43 +87,48 @@ export default function CheckoutPage() {
 
     setSubmitting(true);
     try {
-      await submitOrder();
+      const orderRes = await submitOrder();
+      const orderId = orderRes.data?.orderId;
+      if (!orderId) {
+        alert('Không lấy được ID đơn hàng.');
+        return;
+      }
+      const payload = {
+        orderId: orderId,
+        paymentMethod: form.paymentMethod,
+        amount: total,
+        paymentGateway: form.paymentMethod !== 'cod' ? form.paymentMethod.toUpperCase() : undefined,
+      };
+      console.log("📦 Gửi payment payload:", payload);
+      await createPayment(payload);
+
+      await createPayment({
+        orderId: orderId,
+        paymentMethod: form.paymentMethod,
+        amount: total,
+        paymentGateway: form.paymentMethod !== 'cod' ? form.paymentMethod.toUpperCase() : undefined,
+      });
+
       setOrderSuccess(true);
+      router.push(`/orderdetails/${orderId}`); // ✅ Chuyển sang trang chi tiết đơn hàng
     } catch (err: any) {
+      console.error("❌ Lỗi trong quá trình đặt hàng:", err);
       if (err.response && err.response.data === 'Giỏ hàng trống.') {
         alert('Giỏ hàng đang trống, không thể thanh toán.');
       } else {
-        alert('Lỗi khi gửi đơn hàng. Vui lòng thử lại sau.');
+        alert('Lỗi khi gửi đơn hàng hoặc thanh toán. Vui lòng thử lại sau.');
       }
+    } finally {
+      setSubmitting(false);
     }
   };
-
-  if (loadingCart) return <div className="text-center py-10">Đang tải giỏ hàng...</div>;
-  if (errorCart) return <div className="text-center py-10 text-red-500">{errorCart}</div>;
-  if (orderSuccess)
-    return (
-      <div className="max-w-3xl mx-auto p-8 text-center">
-        <h1 className="text-4xl font-extrabold text-green-600 mb-6">🎉 Đặt hàng thành công!</h1>
-        <p className="text-lg mb-6">Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ sớm.</p>
-        <Link
-          href="/product"
-          className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded transition"
-        >
-          Tiếp tục mua sắm
-        </Link>
-      </div>
-    );
 
   return (
     <div className="max-w-7xl mx-auto p-8 bg-orange-50 min-h-screen">
       <h1 className="text-4xl font-extrabold text-orange-600 mb-10 select-none">Thanh toán đơn hàng</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white rounded-lg shadow-lg p-6 space-y-6 md:col-span-2 border border-orange-300"
-        >
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-6 space-y-6 md:col-span-2 border border-orange-300">
           <h2 className="text-2xl font-semibold text-orange-700 mb-4">Thông tin giao hàng</h2>
-
           {['fullName', 'email', 'phone', 'address'].map((field) => (
             <div key={field}>
               <input

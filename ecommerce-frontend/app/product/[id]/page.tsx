@@ -29,7 +29,6 @@ export default function ProductPage() {
         setLoading(false);
         return;
       }
-
       try {
         setLoading(true);
         const response = await fetchProductById(Number(params.id));

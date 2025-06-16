@@ -187,5 +187,91 @@ export const fetchAdminDashboard = () => {
     }
   }).then(res => res.data);
 };
+export const fetchRevenueByDayInMonth = (year: number, month: number) => {
+  return API.get(`/admin/dashboard/revenue-by-day?year=${year}&month=${month}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
+export const fetchTopSellingProducts = (top = 5) => {
+  return API.get(`/admin/dashboard/top-products?top=${top}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
+
+
+// Tạo thanh toán mới
+export const createPayment = (data: {
+  orderId: number;
+  paymentMethod: string;
+  amount: number;
+  transactionId?: string;
+  paymentGateway?: string;
+}) => {
+  return API.post('/payment/create', data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
+// Lấy thanh toán theo orderId
+export const fetchPaymentByOrderId = async (orderId: number) => {
+  const res = await API.get(`/payment/order/${orderId}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+
+  return res.data;
+};
+// lấy dữ liệu để in ra
+export const fetchData = async (orderId: number) => {
+  try {
+    const order = await fetchOrderDetails(orderId);
+    const payment = await fetchPaymentByOrderId(orderId);
+    return { order, payment };
+  } catch (error) {
+    console.error("❌ Lỗi khi fetch dữ liệu:", error);
+    throw error;
+  }
+};
+
+// Lấy chi tiết đơn hàng theo OrderId
+export const fetchOrderById = (orderId: number) => {
+  return API.get(`/orderdetails/order/${orderId}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
+
+// Lấy chi tiết đơn hàng theo userId + orderID
+export const fetchOrderDetails = async (orderId: string | number) => {
+  const idNumber = typeof orderId === 'string' ? parseInt(orderId) : orderId;
+  console.log('📦 Gọi API lấy chi tiết đơn hàng:', idNumber);
+
+  const res = await API.get(`/orderdetails/user/${idNumber}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+
+  console.log('✅ Nhận được phản hồi:', res.data);
+
+  const totalAmount = res.data.reduce(
+    (sum: number, item: any) => sum + item.product.price * item.quantity,
+    0
+  );
+
+  return {
+    orderId: idNumber,
+    createdAt: new Date().toISOString(),
+    orderDetails: res.data,
+    totalAmount,
+  };
+};
 
 export default API;

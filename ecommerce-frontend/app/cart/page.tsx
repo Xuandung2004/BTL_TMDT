@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { FiShoppingBag, FiArrowLeft } from 'react-icons/fi';
 import CartItem from '@/components/card/CartItem';
 
-
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -17,9 +16,16 @@ export default function CartPage() {
     try {
       setLoading(true);
       const res = await fetchCart();
-      setCartItems(res.data);
+      if (!Array.isArray(res.data)) {
+        setError("Dữ liệu giỏ hàng không hợp lệ");
+        setCartItems([]);
+      } else {
+        setCartItems(res.data);
+        setError(null);
+      }
     } catch (err) {
       setError("Lỗi khi tải giỏ hàng. Vui lòng thử lại sau.");
+      setCartItems([]);
     } finally {
       setLoading(false);
     }
@@ -62,7 +68,7 @@ export default function CartPage() {
   if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
   if (cartItems.length === 0) return (
     <div className="p-8 text-center">
-      <h2 className="text-xl font-semibold mb-2">Giỏ hàng trống</h2>
+      <h2 className="text-xl font-semibold mb-2">🛒 Giỏ hàng trống</h2>
       <Link href="/product" className="text-blue-600 hover:underline">Tiếp tục mua sắm</Link>
     </div>
   );
@@ -88,14 +94,13 @@ export default function CartPage() {
 
         <div className="divide-y">
           {cartItems.map((item) => (
-  <CartItem
-    key={item.productId} 
-    item={item}
-    onUpdateQuantity={handleUpdateQuantity}
-    onDeleteItem={handleDeleteItem}
-  />
-))}
-
+            <CartItem
+              key={item.productId}
+              item={item}
+              onUpdateQuantity={handleUpdateQuantity}
+              onDeleteItem={handleDeleteItem}
+            />
+          ))}
         </div>
 
         <div className="border-t p-6">
