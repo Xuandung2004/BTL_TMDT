@@ -20,10 +20,24 @@ export default function LoginPage() {
       const response = await login(username, password);
       // Lưu JWT token vào localStorage hoặc state
       localStorage.setItem("token", response.data.token);
-      // Chuyển hướng đến trang chủ hoặc trang dashboard sau khi đăng nhập thành công
-      router.push("/");
+
+      // Lấy role từ response
+      const role = response.data.user?.role;
+
+      // Chuyển hướng theo role
+      if (role === "admin") {
+        router.push("/admin");
+      } else if (role === "nguoidung") {
+        router.push("/");
+      }
     } catch (error: any) {
-      setErrorMessage(error.response ? error.response.data : "Something went wrong");
+      let msg = "Something went wrong";
+      if (error.response && typeof error.response.data === "string") {
+        msg = error.response.data;
+      } else if (error.response && typeof error.response.data === "object") {
+        msg = error.response.data.title || error.response.data.message || JSON.stringify(error.response.data);
+      }
+      setErrorMessage(msg);
     }
   };
 

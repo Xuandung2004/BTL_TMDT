@@ -4,7 +4,8 @@ using System.Security.Claims;
 using Models;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Controllers{
+namespace Controllers
+{
     [ApiController]
     [Route("api/users")]
     public class UserController : ControllerBase
@@ -32,7 +33,7 @@ namespace Controllers{
                 Password = BCrypt.Net.BCrypt.HashPassword(
                                         request.Password),
                 FullName = request.FullName,
-                Role = "nhanvien",
+                Role = "nguoidung", // Mặc định là người dùng
                 Phone = request.Phone,
                 IsActive = true
             };
