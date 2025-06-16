@@ -5,6 +5,8 @@ import { fetchCart, submitOrder, createPayment } from '@/app/services/api';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
+import { colors } from '@mui/material';
+import { red } from '@mui/material/colors';
 
 interface FormData {
   fullName: string;
@@ -126,81 +128,81 @@ export default function CheckoutPage() {
 
   return (
     <>
-    <Header/>
-    
-    <div className="max-w-7xl mx-auto p-8 bg-orange-50 min-h-screen">
-      <h1 className="text-4xl font-extrabold text-orange-600 mb-10 select-none">Thanh toán đơn hàng</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-6 space-y-6 md:col-span-2 border border-orange-300">
-          <h2 className="text-2xl font-semibold text-orange-700 mb-4">Thông tin giao hàng</h2>
-          {['fullName', 'email', 'phone', 'address'].map((field) => (
-            <div key={field}>
-              <input
-                name={field}
-                value={(form as any)[field]}
-                onChange={handleChange}
-                placeholder={field === 'fullName' ? 'Họ và tên' : field === 'email' ? 'Email' : field === 'phone' ? 'Số điện thoại' : 'Địa chỉ giao hàng'}
-                className="w-full border rounded px-4 py-2"
-              />
-              {formErrors[field as keyof FormData] && (
-                <p className="text-red-500 text-sm">{formErrors[field as keyof FormData]}</p>
-              )}
-            </div>
-          ))}
+      <Header />
 
-          <textarea
-            name="note"
-            value={form.note}
-            onChange={handleChange}
-            placeholder="Ghi chú (tuỳ chọn)"
-            className="w-full border rounded px-4 py-2"
-          />
-
-          <div>
-            <label className="block font-medium mb-1">Phương thức thanh toán</label>
-            <select
-              name="paymentMethod"
-              value={form.paymentMethod}
-              onChange={handleChange}
-              className="w-full border rounded px-4 py-2"
-            >
-              <option value="cod">Thanh toán khi nhận hàng (COD)</option>
-              <option value="bank">Chuyển khoản ngân hàng</option>
-              <option value="momo">Ví điện tử MoMo</option>
-              <option value="zalopay">Ví điện tử ZaloPay</option>
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded"
-          >
-            {submitting ? 'Đang xử lý...' : 'Xác nhận đặt hàng'}
-          </button>
-        </form>
-
-        <aside className="bg-white rounded-lg shadow-lg p-6 border border-orange-300">
-          <h2 className="text-2xl font-semibold text-orange-700 mb-6">Đơn hàng của bạn</h2>
-          <ul className="divide-y divide-gray-200 max-h-[400px] overflow-y-auto">
-            {cartItems.map((item) => (
-              <li key={item.productId} className="flex justify-between py-3">
-                <div>
-                  <p className="font-semibold text-orange-900">{item.product.name}</p>
-                  <p className="text-sm text-gray-500">x{item.quantity}</p>
-                </div>
-                <div className="font-bold text-orange-800">
-                  {(item.product.price * item.quantity).toLocaleString()} đ
-                </div>
-              </li>
+      <div className="max-w-7xl mx-auto p-8 bg-orange-50 min-h-screen">
+        <h1 className="text-4xl font-extrabold text-orange-600 mb-10 select-none">Thanh toán đơn hàng</h1>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-6 space-y-6 md:col-span-2 border border-orange-300">
+            <h2 className="text-2xl font-semibold text-orange-700 mb-4">Thông tin giao hàng</h2>
+            {['fullName', 'email', 'phone', 'address'].map((field) => (
+              <div key={field}>
+                <input
+                  name={field}
+                  value={(form as any)[field]}
+                  onChange={handleChange}
+                  placeholder={field === 'fullName' ? 'Họ và tên' : field === 'email' ? 'Email' : field === 'phone' ? 'Số điện thoại' : 'Địa chỉ giao hàng'}
+                  className="p-2 w-full border border-gray-400 rounded bg-white text-gray-800"
+                />
+                {formErrors[field as keyof FormData] && (
+                  <p className="text-red-500 text-sm">{formErrors[field as keyof FormData]}</p>
+                )}
+              </div>
             ))}
-          </ul>
-          <div className="border-t border-gray-300 mt-6 pt-4 text-right font-extrabold text-xl text-orange-800">
-            Tổng tiền: {total.toLocaleString()} đ
-          </div>
-        </aside>
+
+            <textarea
+              name="note"
+              value={form.note}
+              onChange={handleChange}
+              placeholder="Ghi chú (tuỳ chọn)"
+              className="p-2 w-full border border-gray-400 rounded bg-white text-gray-800"
+            />
+
+            <div>
+              <label className="block font-medium mb-1 text-yellow-600" >Phương thức thanh toán</label>
+              <select
+                name="paymentMethod"
+                value={form.paymentMethod}
+                onChange={handleChange}
+                className="p-2 w-full border border-gray-400 rounded bg-white text-gray-800"
+              >
+                <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+                <option value="bank">Chuyển khoản ngân hàng</option>
+                <option value="momo">Ví điện tử MoMo</option>
+                <option value="zalopay">Ví điện tử ZaloPay</option>
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded"
+            >
+              {submitting ? 'Đang xử lý...' : 'Xác nhận đặt hàng'}
+            </button>
+          </form>
+
+          <aside className="bg-white rounded-lg shadow-lg p-6 border border-orange-300">
+            <h2 className="text-2xl font-semibold text-orange-700 mb-6">Đơn hàng của bạn</h2>
+            <ul className="divide-y divide-gray-200 max-h-[400px] overflow-y-auto">
+              {cartItems.map((item) => (
+                <li key={item.productId} className="flex justify-between py-3">
+                  <div>
+                    <p className="font-semibold text-orange-900">{item.product.name}</p>
+                    <p className="text-sm text-gray-500">x{item.quantity}</p>
+                  </div>
+                  <div className="font-bold text-orange-800">
+                    {(item.product.price * item.quantity).toLocaleString()} đ
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <div className="border-t border-gray-300 mt-6 pt-4 text-right font-extrabold text-xl text-orange-800">
+              Tổng tiền: {total.toLocaleString()} đ
+            </div>
+          </aside>
+        </div>
       </div>
-    </div>
     </>
   );
 }
