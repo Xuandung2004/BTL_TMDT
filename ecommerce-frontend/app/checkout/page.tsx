@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { fetchCart, submitOrder, createPayment } from '@/app/services/api';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Header from '@/components/layout/Header';
 
 interface FormData {
   fullName: string;
@@ -124,6 +125,9 @@ export default function CheckoutPage() {
   };
 
   return (
+    <>
+    <Header/>
+    
     <div className="max-w-7xl mx-auto p-8 bg-orange-50 min-h-screen">
       <h1 className="text-4xl font-extrabold text-orange-600 mb-10 select-none">Thanh toán đơn hàng</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -197,5 +201,6 @@ export default function CheckoutPage() {
         </aside>
       </div>
     </div>
+    </>
   );
 }
