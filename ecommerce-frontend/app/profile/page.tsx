@@ -93,9 +93,9 @@ export default function ProfilePage() {
 
           {!edit ? (
             <div className="space-y-4">
-              <Field label="Tên đăng nhập" name="username" value={form.username} onChange={() => {}} disabled />
-              <Field label="Họ tên" name="fullName" value={form.fullName} onChange={() => {}} disabled />
-              <Field label="Số điện thoại" name="phone" value={form.phone} onChange={() => {}} disabled />
+              <Field label="Tên đăng nhập" name="username" value={form.username} onChange={() => { }} disabled />
+              <Field label="Họ tên" name="fullName" value={form.fullName} onChange={() => { }} disabled />
+              <Field label="Số điện thoại" name="phone" value={form.phone} onChange={() => { }} disabled />
               <ActionButton onClick={() => setEdit(true)} primary>✏️ Sửa thông tin</ActionButton>
               <ActionButton onClick={() => setShowChangePassword(!showChangePassword)}>
                 🔒 {showChangePassword ? 'Đóng đổi mật khẩu' : 'Đổi mật khẩu'}
@@ -103,7 +103,7 @@ export default function ProfilePage() {
             </div>
           ) : (
             <form onSubmit={handleUpdate} className="space-y-4">
-              <Field label="Tên đăng nhập" name="username" value={form.username} onChange={() => {}} disabled />
+              <Field label="Tên đăng nhập" name="username" value={form.username} onChange={() => { }} disabled />
               <Field label="Họ tên" name="fullName" value={form.fullName} onChange={handleChange} required />
               <Field label="Số điện thoại" name="phone" value={form.phone} onChange={handleChange} required />
               <ActionButton type="submit" primary>💾 Lưu thay đổi</ActionButton>
@@ -117,7 +117,7 @@ export default function ProfilePage() {
               <input
                 type="password"
                 name="oldPassword"
-                className="input-style"
+                className="p-2 w-full border border-gray-400 rounded bg-white text-gray-800"
                 placeholder="Mật khẩu cũ"
                 value={passwordForm.oldPassword}
                 onChange={(e) => setPasswordForm({ ...passwordForm, oldPassword: e.target.value })}
@@ -126,7 +126,7 @@ export default function ProfilePage() {
               <input
                 type="password"
                 name="newPassword"
-                className="input-style"
+                className="p-2 w-full border border-gray-400 rounded bg-white text-gray-800"
                 placeholder="Mật khẩu mới"
                 value={passwordForm.newPassword}
                 onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
@@ -166,9 +166,7 @@ function Field({ label, name, value, onChange, disabled = false, required = fals
         onChange={onChange}
         required={required}
         placeholder={label}
-        className={`p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-          disabled ? 'bg-gray-100' : 'bg-white'
-        }`}
+        className="p-2 w-full border border-gray-400 rounded bg-white text-gray-800"
       />
     </div>
   );

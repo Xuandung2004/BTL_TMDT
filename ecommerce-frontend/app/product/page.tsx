@@ -74,7 +74,7 @@ export default function ProductsPage() {
                   <p className="text-blue-600 font-bold text-md">
                     {product.price?.toLocaleString()}₫
                   </p>
-                  <p className="text-sm text-gray-500">Kho: {product.stock}</p>
+                  <p className="text-green-600 font-bold text-md">Kho: {product.instock}</p>
                 </div>
               </Link>
 

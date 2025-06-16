@@ -2,9 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { FiLogOut } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 import { FiSearch, FiShoppingCart, FiUser } from 'react-icons/fi';
 import { fetchCurrentUser, logout, fetchCart } from '@/app/services/api';
+
 
 const Header = () => {
   const [user, setUser] = useState<{ username: string } | null>(null);
@@ -46,7 +48,7 @@ const Header = () => {
   const handleLogout = async () => {
     await logout();
     setUser(null);
-    router.refresh();
+    router.push('/');
   };
 
   return (
@@ -93,31 +95,38 @@ const Header = () => {
           {/* Icons & User */}
           <div className="flex items-center space-x-4">
             {user ? (
-            <>
-              <Link href="/profile">
-                <span className="text-gray-900 font-medium px-5">
-                  Hello, {user.username}
-                </span>
+              <>
+                <Link href="/profile">
+                  <span className="text-gray-900 font-medium px-5">
+                    Hello, {user.username}
+                  </span>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-4 py-1.5 text-sm font-semibold bg-red-50 text-red-600 border border-red-200 rounded-full shadow-sm hover:bg-red-100 hover:text-white hover:bg-red-500 transition-colors duration-200"
+                  title="Đăng xuất"
+                >
+                  <FiLogOut size={18} />
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link href="/login" className="p-2 text-gray-900 hover:bg-gray-900/10 rounded-full">
+                <FiUser size={20} />
               </Link>
+            )}
+            <Link href="/cart" className="relative group ml-4">
               <button
-                onClick={handleLogout}
-                className="px-3 py-1 text-sm bg-white text-gray-900 border border-gray-400 rounded hover:bg-gray-100"
+                className="flex items-center justify-center w-11 h-11 rounded-full bg-white shadow hover:bg-yellow-200 transition-colors duration-200 border border-yellow-300"
+                title="Giỏ hàng"
               >
-                Logout
+                <FiShoppingCart size={22} className="text-red-600 group-hover:text-yellow-800 transition-colors" />
+                {cartCount > 0 && (
+                  <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow">
+                    {cartCount}
+                  </span>
+                )}
               </button>
-            </>
-          ) : (
-            <Link href="/login" className="p-2 text-gray-900 hover:bg-gray-900/10 rounded-full">
-              <FiUser size={20} />
-            </Link>
-          )}
-            <Link href="/cart" className="p-2 text-gray-900 hover:bg-gray-900/10 rounded-full relative" aria-label="Giỏ hàng">
-              <FiShoppingCart size={20} />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
-                  {cartCount}
-                </span>
-              )}
             </Link>
           </div>
         </div>
