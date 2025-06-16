@@ -7,6 +7,7 @@ const nextConfig = {
       "product.hstatic.net",
       "img.ltwebstatic.com",
       "cdn.shopify.com",
+      "localhost",
     ],
   },
 };

@@ -7,7 +7,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { FiShoppingCart, FiHeart } from 'react-icons/fi';
 import { FaHeart } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -15,7 +14,6 @@ import type { Product } from '@/types';
 import { fetchProducts } from '@/app/services/api';
 
 const TrendingCollection = () => {
-  const router = useRouter();
   const [likedProducts, setLikedProducts] = useState<number[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,6 +23,7 @@ const TrendingCollection = () => {
     const getProducts = async () => {
       try {
         const response = await fetchProducts();
+        console.log('Trending products:', response.data); // Add this for debugging
         // Lấy 6 sản phẩm mới nhất
         setProducts(response.data.slice(0, 6));
       } catch (err) {
@@ -46,16 +45,12 @@ const TrendingCollection = () => {
     );
   };
 
-  const navigateToProduct = (slug: string) => {
-    router.push(`/product/${slug}`);
-  };
-
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900">Bộ Sưu Tập Mới</h2>
-          <Link href="/collections" className="text-gray-900 hover:text-[#FFB629] font-medium">
+          <Link href="/products" className="text-gray-900 hover:text-[#FFB629] font-medium">
             Xem tất cả
           </Link>
         </div>
@@ -84,7 +79,7 @@ const TrendingCollection = () => {
     <div className="container mx-auto px-4 py-12">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900">Bộ Sưu Tập Mới</h2>
-        <Link href="/collections" className="text-gray-900 hover:text-[#FFB629] font-medium">
+        <Link href="/products" className="text-gray-900 hover:text-[#FFB629] font-medium">
           Xem tất cả
         </Link>
       </div>
@@ -131,7 +126,7 @@ const TrendingCollection = () => {
                   </div>
                   <div className="absolute bottom-4 left-4 right-4">
                     <Link 
-                      href={`/product/${product.slug}`}
+                      href={`/product/${product.id}`}
                       className="w-full bg-white text-gray-900 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2 hover:bg-[#FFB629] hover:text-white font-medium"
                     >
                       <FiShoppingCart />
@@ -139,7 +134,7 @@ const TrendingCollection = () => {
                     </Link>
                   </div>
                 </div>
-                <Link href={`/product/${product.slug}`}>
+                <Link href={`/product/${product.id}`}>
                   <h3 className="text-lg font-bold mb-2 text-gray-900 group-hover:text-[#FFB629] transition-colors">
                     {product.name}
                   </h3>

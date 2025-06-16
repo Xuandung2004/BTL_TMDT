@@ -11,12 +11,13 @@ const HeroBanner = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const getRandomProduct = async () => {
+    const getProduct = async () => {
       try {
         const response = await fetchProducts();
-        // Lấy một sản phẩm ngẫu nhiên từ danh sách
-        const randomIndex = Math.floor(Math.random() * response.data.length);
-        setProduct(response.data[randomIndex]);
+        // Luôn lấy sản phẩm đầu tiên thay vì random
+        if (response.data && response.data.length > 0) {
+          setProduct(response.data[0]);
+        }
       } catch (err) {
         setError('Failed to fetch product');
         console.error('Error:', err);
@@ -25,7 +26,7 @@ const HeroBanner = () => {
       }
     };
 
-    getRandomProduct();
+    getProduct();
   }, []);
 
   if (isLoading) {
@@ -74,7 +75,7 @@ const HeroBanner = () => {
               </span>
             </div>
             <Link
-              href={`/product/${product.slug}`}
+              href={`/product/${product.id}`}
               className="inline-block bg-gray-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
             >
               Xem chi tiết

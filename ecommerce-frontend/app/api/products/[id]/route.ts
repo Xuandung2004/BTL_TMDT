@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { fetchProductById } from '@/app/services/api';
 
 // Mock product data
 const products = {
@@ -859,33 +860,15 @@ const products = {
 
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const product = products[params.slug as keyof typeof products];
-    
-    if (!product) {
-      return new NextResponse(JSON.stringify({ error: 'Product not found' }), {
-        status: 404,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    }
-
-    return new NextResponse(JSON.stringify(product), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await fetchProductById(Number(params.id));
+    return NextResponse.json(response.data);
   } catch (error) {
-    console.error('Error fetching product:', error);
-    return new NextResponse(JSON.stringify({ error: 'Internal server error' }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return NextResponse.json(
+      { error: 'Failed to fetch product' },
+      { status: 500 }
+    );
   }
 } 

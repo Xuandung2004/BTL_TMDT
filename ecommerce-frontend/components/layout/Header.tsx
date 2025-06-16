@@ -88,9 +88,6 @@ const Header = () => {
             <Link href="/product" className="text-gray-900 hover:text-gray-700 font-medium">
               Sản phẩm
             </Link>
-            <Link href="/deals" className="text-gray-900 hover:text-gray-700 font-medium">
-              Ưu đãi
-            </Link>
           </nav>
 
           {/* Icons & User */}

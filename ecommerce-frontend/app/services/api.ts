@@ -21,15 +21,20 @@ export const updateCategory = (id: number,
 export const deleteCategory = (id: number) => API.delete(
   `/categories/${id}`);
 
-
-
-
 // PRODUCT API
 export const fetchProducts = () => API.get("/products", {
   headers: {
     'Content-Type': 'application/json',  // Đảm bảo gửi header hợp lệ
   },
 });
+
+// Lấy chi tiết sản phẩm theo ID
+export const fetchProductById = (id: number) => API.get(`/products/${id}`, {
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 export const createProduct = (data: any) =>
   API.post("/products", data);
 export const updateProduct = (id: number, data: any) =>
@@ -182,6 +187,5 @@ export const fetchAdminDashboard = () => {
     }
   }).then(res => res.data);
 };
-
 
 export default API;

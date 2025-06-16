@@ -15,6 +15,19 @@ export interface Category {
   link: string;
 }
 
+export interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  instock: number;
+  imageUrl: string;
+  categoryId: number;
+  category?: Category;
+  rating?: number;
+  discountPrice?: number;
+}
+
 export interface ApiResponse<T> {
   data: T;
   message: string;

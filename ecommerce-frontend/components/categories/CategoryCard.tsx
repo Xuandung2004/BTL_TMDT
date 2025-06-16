@@ -14,7 +14,6 @@ interface CategoryProps {
     name: string;
     description: string;
     imageUrl: string;
-    slug: string;
   };
 }
 
@@ -35,7 +34,7 @@ const CategoryCard = ({ category }: CategoryProps) => {
       }}
     >
       <CardActionArea 
-        onClick={() => router.push(`/category/${category.slug}`)}
+        onClick={() => router.push(`/categories/${category.id}`)}
         sx={{ height: "100%" }}
       >
         <CardMedia

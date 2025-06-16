@@ -22,6 +22,7 @@ const WeeklyBestSell = () => {
     const getProducts = async () => {
       try {
         const response = await fetchProducts();
+        console.log('Weekly best sell products:', response.data);
         // Lấy 5 sản phẩm bán chạy nhất (giả sử sắp xếp theo số lượng đã bán)
         setProducts(response.data.slice(0, 5));
       } catch (err) {
@@ -47,7 +48,7 @@ const WeeklyBestSell = () => {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Sản Phẩm Bán Chạy</h2>
+          <h2 className="text-3xl font-bold text-gray-900">Bán Chạy Trong Tuần</h2>
           <Link href="/products" className="text-gray-900 hover:text-[#FFB629] font-medium">
             Xem tất cả
           </Link>
@@ -76,7 +77,7 @@ const WeeklyBestSell = () => {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900">Sản Phẩm Bán Chạy</h2>
+        <h2 className="text-3xl font-bold text-gray-900">Bán Chạy Trong Tuần</h2>
         <Link href="/products" className="text-gray-900 hover:text-[#FFB629] font-medium">
           Xem tất cả
         </Link>
@@ -124,7 +125,7 @@ const WeeklyBestSell = () => {
                   </div>
                   <div className="absolute bottom-4 left-4 right-4">
                     <Link 
-                      href={`/product/${product.slug}`}
+                      href={`/product/${product.id}`}
                       className="w-full bg-white text-gray-900 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2 hover:bg-[#FFB629] hover:text-white font-medium"
                     >
                       <FiShoppingCart />
@@ -132,7 +133,7 @@ const WeeklyBestSell = () => {
                     </Link>
                   </div>
                 </div>
-                <Link href={`/product/${product.slug}`}>
+                <Link href={`/product/${product.id}`}>
                   <h3 className="text-lg font-bold mb-2 text-gray-900 group-hover:text-[#FFB629] transition-colors">
                     {product.name}
                   </h3>
