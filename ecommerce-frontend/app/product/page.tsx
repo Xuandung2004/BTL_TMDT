@@ -53,27 +53,38 @@ export default function ProductsPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white rounded-2xl shadow-md hover:shadow-lg transition transform hover:-translate-y-1"
-            >
-              <img
-                src={product.imageUrl || "/placeholder.png"}
-                alt={product.name}
-                className="w-full h-48 object-cover rounded-t-2xl"
-              />
-              <div className="p-4 space-y-2">
-                <h2 className="text-lg font-semibold text-gray-800">{product.name}</h2>
-                <p className="text-gray-600 text-sm h-12 overflow-hidden">{product.description}</p>
-                <p className="text-blue-600 font-bold text-md">{product.price?.toLocaleString()}₫</p>
-                <p className="text-sm text-gray-500">Kho: {product.stock}</p>
-                <button
-                  onClick={() => handleAddToCart(product.id)}
-                  className="w-full mt-2 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg transition"
-                >
-                  🛒 Thêm vào giỏ
-                </button>
-              </div>
+            <div key={product.id} className="group relative">
+              {/* Link bao quanh toàn bộ card để click vào bất cứ đâu */}
+              <Link
+                href={`/product/${product.id}`}
+                className="block bg-white rounded-2xl shadow-md hover:shadow-lg transition transform hover:-translate-y-1 overflow-hidden"
+              >
+                <img
+                  src={product.imageUrl || "/placeholder.png"}
+                  alt={product.name}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4 space-y-2">
+                  <h2 className="text-lg font-semibold text-gray-800 truncate">
+                    {product.name}
+                  </h2>
+                  <p className="text-gray-600 text-sm h-12 overflow-hidden">
+                    {product.description}
+                  </p>
+                  <p className="text-blue-600 font-bold text-md">
+                    {product.price?.toLocaleString()}₫
+                  </p>
+                  <p className="text-sm text-gray-500">Kho: {product.stock}</p>
+                </div>
+              </Link>
+
+              {/* Button Thêm vào giỏ hàng giữ ở dưới cùng, không nằm trong Link */}
+              <button
+                onClick={() => handleAddToCart(product.id)}
+                className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-11/12 bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 rounded-lg transition opacity-0 group-hover:opacity-100"
+              >
+                🛒 Thêm vào giỏ
+              </button>
             </div>
           ))}
         </div>
