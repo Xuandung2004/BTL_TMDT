@@ -92,6 +92,29 @@ namespace Controllers
 
             return NoContent();
         }
+        [HttpPost("{id}/change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordRequest request)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return NotFound("Không tìm thấy người dùng.");
+
+            // Kiểm tra mật khẩu cũ
+            if (!BCrypt.Net.BCrypt.Verify(request.OldPassword, user.Password))
+                return BadRequest("Mật khẩu cũ không đúng.");
+
+            // Đổi mật khẩu mới
+            user.Password = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            await _context.SaveChangesAsync();
+
+            return Ok("Đổi mật khẩu thành công!");
+        }
+    }
+    public class ChangePasswordRequest
+    {
+        public string OldPassword { get; set; }
+        public string NewPassword { get; set; }
     }
 
     public class CreateUserRequest

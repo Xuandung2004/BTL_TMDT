@@ -48,7 +48,7 @@ export default function RegisterPage() {
                             <input
                                 type="text"
                                 name="username"
-                                className="mt-2 p-2 w-full border border-gray-300 rounded-md"
+                                className="p-2 w-full border border-gray-400 rounded bg-white text-gray-800"
                                 placeholder="Nhập username"
                                 value={form.username}
                                 onChange={handleChange}
@@ -60,7 +60,7 @@ export default function RegisterPage() {
                             <input
                                 type="password"
                                 name="password"
-                                className="mt-2 p-2 w-full border border-gray-300 rounded-md"
+                                className="p-2 w-full border border-gray-400 rounded bg-white text-gray-800"
                                 placeholder="Nhập mật khẩu"
                                 value={form.password}
                                 onChange={handleChange}
@@ -72,7 +72,7 @@ export default function RegisterPage() {
                             <input
                                 type="text"
                                 name="fullName"
-                                className="mt-2 p-2 w-full border border-gray-300 rounded-md"
+                                className="p-2 w-full border border-gray-400 rounded bg-white text-gray-800"
                                 placeholder="Nhập họ tên"
                                 value={form.fullName}
                                 onChange={handleChange}
@@ -84,7 +84,7 @@ export default function RegisterPage() {
                             <input
                                 type="text"
                                 name="phone"
-                                className="mt-2 p-2 w-full border border-gray-300 rounded-md"
+                                className="p-2 w-full border border-gray-400 rounded bg-white text-gray-800"
                                 placeholder="Nhập số điện thoại"
                                 value={form.phone}
                                 onChange={handleChange}
