@@ -66,11 +66,64 @@ namespace Controllers
             var data = await _context.Orders
                 .Where(o => o.OrderDate.Year == year && o.OrderDate.Month == month)
                 .GroupBy(o => o.OrderDate.Date)
+                .Select(g => new
+                {
+                    date = g.Key,
+                    total = g.Sum(o => o.TotalAmount)
+                })
+                .OrderBy(x => x.date)
+                .ToListAsync();
+
+            return Ok(data);
+        }
+        // Thống kê doanh thu theo tuần (7 ngày gần nhất)
+        [HttpGet("revenue-by-week")]
+        public async Task<IActionResult> GetRevenueByWeek()
+        {
+            var today = DateTime.Today;
+            var weekAgo = today.AddDays(-6); // tính cả hôm nay là 7 ngày
+
+            var data = await _context.Orders
+                .Where(o => o.OrderDate.Date >= weekAgo && o.OrderDate.Date <= today)
+                .GroupBy(o => o.OrderDate.Date)
                 .Select(g => new {
                     date = g.Key,
                     total = g.Sum(o => o.TotalAmount)
                 })
                 .OrderBy(x => x.date)
+                .ToListAsync();
+
+            return Ok(data);
+        }
+
+        // Thống kê doanh thu theo tháng trong năm (12 tháng)
+        [HttpGet("revenue-by-month")]
+        public async Task<IActionResult> GetRevenueByMonth(int year)
+        {
+            var data = await _context.Orders
+                .Where(o => o.OrderDate.Year == year)
+                .GroupBy(o => o.OrderDate.Month)
+                .Select(g => new {
+                    month = g.Key,
+                    total = g.Sum(o => o.TotalAmount)
+                })
+                .OrderBy(x => x.month)
+                .ToListAsync();
+
+            return Ok(data);
+        }
+
+        // Thống kê doanh thu theo năm (các năm đã có dữ liệu)
+        [HttpGet("revenue-by-year")]
+        public async Task<IActionResult> GetRevenueByYear()
+        {
+            var data = await _context.Orders
+                .GroupBy(o => o.OrderDate.Year)
+                .Select(g => new {
+                    year = g.Key,
+                    total = g.Sum(o => o.TotalAmount)
+                })
+                .OrderBy(x => x.year)
                 .ToListAsync();
 
             return Ok(data);

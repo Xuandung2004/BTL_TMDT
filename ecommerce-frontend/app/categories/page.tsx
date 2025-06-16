@@ -46,14 +46,7 @@ export default function CategoriesPage() {
               className="group block overflow-hidden rounded-xl border border-gray-200 shadow-md hover:shadow-lg transition-all bg-white"
             >
               <div className="relative h-40">
-                <img
-                  src={
-                    category.imageUrl ||
-                    `https://source.unsplash.com/400x300/?${encodeURIComponent(category.name)}`
-                  }
-                  alt={category.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition" />
               </div>
 

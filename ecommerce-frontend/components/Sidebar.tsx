@@ -16,7 +16,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="w-64 min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white shadow-2xl flex flex-col">
+    <div className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white shadow-2xl flex flex-col min-h-screen">
       <div className="p-6 border-b border-gray-700">
         <Link href="/admin">
           <h2 className="text-2xl font-bold text-center tracking-wide">🛠️ Admin Panel</h2>

@@ -201,6 +201,32 @@ export const fetchTopSellingProducts = (top = 5) => {
     }
   });
 };
+// Doanh thu 7 ngày gần nhất
+export const fetchRevenueByWeek = () => {
+  return API.get('/admin/dashboard/revenue-by-week', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
+
+// Doanh thu theo tháng trong 1 năm
+export const fetchRevenueByMonth = (year: number) => {
+  return API.get(`/admin/dashboard/revenue-by-month?year=${year}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
+
+// Doanh thu theo từng năm
+export const fetchRevenueByYear = () => {
+  return API.get('/admin/dashboard/revenue-by-year', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+};
 
 
 // Tạo thanh toán mới
