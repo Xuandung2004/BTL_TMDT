@@ -16,21 +16,21 @@ export default function CartPage() {
     try {
       setLoading(true);
       const res = await fetchCart();
-      if (!Array.isArray(res.data)) {
-        setError("Dữ liệu giỏ hàng không hợp lệ");
-        setCartItems([]);
+      // Backend luôn trả về mảng (có thể rỗng)
+      setCartItems(res.data);
+      setError(null);
+    } catch (err: any) {
+      console.error("Lỗi khi tải giỏ hàng:", err);
+      if (err?.response?.status === 401) {
+        setError("Vui lòng đăng nhập để xem giỏ hàng");
       } else {
-        setCartItems(res.data);
-        setError(null);
+        setError("Lỗi khi tải giỏ hàng. Vui lòng thử lại sau.");
       }
-    } catch (err) {
-      setError("Lỗi khi tải giỏ hàng. Vui lòng thử lại sau.");
       setCartItems([]);
     } finally {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     loadCart();
   }, []);

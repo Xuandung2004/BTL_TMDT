@@ -191,11 +191,10 @@ export default function ProductPage() {
                       {[...Array(5)].map((_, index) => (
                         <AiFillStar
                           key={index}
-                          className={`h-5 w-5 ${
-                            index < Math.floor(product.rating || 0)
+                          className={`h-5 w-5 ${index < Math.floor(product.rating || 0)
                               ? 'text-yellow-400'
                               : 'text-gray-300'
-                          }`}
+                            }`}
                         />
                       ))}
                     </div>
@@ -275,11 +274,10 @@ export default function ProductPage() {
                   </button>
                   <button
                     onClick={handleToggleFavorite}
-                    className={`p-3 rounded-lg border ${
-                      isFavorite 
-                        ? 'bg-red-50 border-red-200 text-red-500' 
+                    className={`p-3 rounded-lg border ${isFavorite
+                        ? 'bg-red-50 border-red-200 text-red-500'
                         : 'hover:bg-gray-50 border-gray-200 text-gray-600'
-                    }`}
+                      }`}
                   >
                     {isFavorite ? (
                       <AiFillHeart className="w-6 h-6" />

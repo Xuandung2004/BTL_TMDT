@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Models;
+using System.Security.Claims;
 
-namespace Controllers{
-    [Route("api/Cart")]
+namespace Controllers
+{
+    [Route("api/cart")]
     [ApiController]
     public class CartController : ControllerBase
     {
@@ -73,16 +75,16 @@ namespace Controllers{
             var userId = GetUserIdFromToken();
             if (userId == null)
                 return Unauthorized("Không tìm thấy người dùng.");
+
             var cartItems = await _context.Carts
                 .Where(c => c.UserId == userId)
                 .Include(c => c.Product)
                 .ToListAsync();
 
-            if (!cartItems.Any())
-                return NotFound("Giỏ hàng trống.");
-
+            // Trả về mảng rỗng nếu không có item nào, KHÔNG return NotFound
             return Ok(cartItems);
         }
+
 
         //Thay đổi số lượng sản phẩm trong giỏ hàng
         [HttpPut("update-quantity")]
@@ -127,8 +129,9 @@ namespace Controllers{
         }
     }
 
-    public class CartRequest{
-        public int ProductId {get; set;}
-        public int Quantity {get; set;}
+    public class CartRequest
+    {
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }
     }
 }
