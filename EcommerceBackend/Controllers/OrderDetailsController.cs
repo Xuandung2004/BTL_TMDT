@@ -43,7 +43,7 @@ namespace Controllers
                 return Unauthorized("Không tìm thấy thông tin người dùng.");
 
             var userId = int.Parse(userIdClaim.Value);
-
+            Console.WriteLine($"✅ Đã gọi API lấy chi tiết đơn hàng {orderId} bởi user {userId}");
             var order = await _context.Orders
                 .Include(o => o.OrderDetails!)
                     .ThenInclude(od => od.Product)

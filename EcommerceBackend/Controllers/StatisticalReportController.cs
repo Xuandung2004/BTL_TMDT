@@ -42,5 +42,38 @@ namespace Controllers
                 revenueToday
             });
         }
+        [HttpGet("top-products")]
+        public async Task<IActionResult> GetTopSellingProducts(int top = 5)
+        {
+            var result = await _context.OrderDetails
+                .Include(od => od.Product)
+                .GroupBy(od => new { od.ProductId, od.Product!.Name })
+                .Select(g => new
+                {
+                    productId = g.Key.ProductId,
+                    name = g.Key.Name,
+                    totalSold = g.Sum(od => od.Quantity)
+                })
+                .OrderByDescending(x => x.totalSold)
+                .Take(top)
+                .ToListAsync();
+
+            return Ok(result);
+        }
+        [HttpGet("revenue-by-day")]
+        public async Task<IActionResult> GetRevenueByDayInMonth(int year, int month)
+        {
+            var data = await _context.Orders
+                .Where(o => o.OrderDate.Year == year && o.OrderDate.Month == month)
+                .GroupBy(o => o.OrderDate.Date)
+                .Select(g => new {
+                    date = g.Key,
+                    total = g.Sum(o => o.TotalAmount)
+                })
+                .OrderBy(x => x.date)
+                .ToListAsync();
+
+            return Ok(data);
+        }
     }
 }

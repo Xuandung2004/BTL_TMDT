@@ -15,27 +15,25 @@ public class PaymentController : ControllerBase
         _context = context;
     }
 
-    // tạo thanh toán mới
+    // Tạo thanh toán mới (chỉ user đăng nhập)
     [HttpPost("create")]
     [Authorize]
-    public async Task<IActionResult> Create([FromBody] Payment payment)
+    public async Task<IActionResult> Create([FromBody] CreatePaymentDto dto)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
 
-        // Kiểm tra đơn hàng có tồn tại và thuộc về user
         var order = await _context.Orders
-            .FirstOrDefaultAsync(o => o.OrderId == payment.OrderId && o.UserId == userId);
+            .FirstOrDefaultAsync(o => o.OrderId == dto.OrderId && o.UserId == userId);
         if (order == null)
             return BadRequest("Đơn hàng không tồn tại hoặc không thuộc về bạn");
 
-        // Tạo thanh toán mới
         var newPayment = new Payment
         {
-            OrderId = payment.OrderId,
-            PaymentMethod = payment.PaymentMethod,
-            Amount = payment.Amount,
-            TransactionId = payment.TransactionId,
-            PaymentGateway = payment.PaymentGateway,
+            OrderId = dto.OrderId,
+            PaymentMethod = dto.PaymentMethod,
+            Amount = dto.Amount,
+            TransactionId = dto.TransactionId,
+            PaymentGateway = dto.PaymentGateway,
             Status = PaymentStatus.Pending,
             CreatedAt = DateTime.UtcNow
         };
@@ -46,22 +44,16 @@ public class PaymentController : ControllerBase
         return Ok(newPayment);
     }
 
-    // Lấy tất cả thanh toán (admin: tất cả, user: của mình)
+    // Lấy tất cả thanh toán
+    // - Nếu là user đã đăng nhập -> chỉ thấy thanh toán của mình
+    // - Nếu không có user (hoặc hệ thống gọi) -> thấy tất cả
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetAll()
     {
-        var role = User.FindFirstValue(ClaimTypes.Role);
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (role == "admin")
-        {
-            var all = await _context.Payments
-                .Include(p => p.Order)
-                .ToListAsync();
-            return Ok(all);
-        }
-        else
+        if (int.TryParse(userIdClaim, out var userId) && userId > 0)
         {
             var mine = await _context.Payments
                 .Where(p => p.Order.UserId == userId)
@@ -69,31 +61,62 @@ public class PaymentController : ControllerBase
                 .ToListAsync();
             return Ok(mine);
         }
+
+        var all = await _context.Payments
+            .Include(p => p.Order)
+            .ToListAsync();
+        return Ok(all);
     }
 
-    // Lấy chi tiết thanh toán theo ID (admin hoặc đúng user mới xem được)
+    // Lấy chi tiết thanh toán theo ID
+    // - Nếu là user: chỉ được xem thanh toán của mình
+    // - Nếu không có userId: được phép xem tất cả
     [HttpGet("{id}")]
     [Authorize]
     public async Task<IActionResult> GetById(int id)
     {
-        var role = User.FindFirstValue(ClaimTypes.Role);
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0");
-
         var payment = await _context.Payments
             .Include(p => p.Order)
             .FirstOrDefaultAsync(p => p.PaymentId == id);
 
-        if (payment == null) return NotFound();
+        if (payment == null)
+            return NotFound();
 
-        if (role != "admin" && payment.Order.UserId != userId)
-            return Forbid();
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (int.TryParse(userIdClaim, out var userId) && userId > 0)
+        {
+            if (payment.Order.UserId != userId)
+                return Forbid();
+        }
+
+        return Ok(payment);
+    }
+    // Lấy thông tin thanh toán theo OrderId
+    // - User chỉ được xem thanh toán của đơn hàng thuộc về mình
+    [HttpGet("order/{orderId}")]
+    [Authorize]
+    public async Task<IActionResult> GetByOrderId(int orderId)
+    {
+        var payment = await _context.Payments
+            .Include(p => p.Order)
+            .FirstOrDefaultAsync(p => p.OrderId == orderId);
+
+        if (payment == null)
+            return NotFound("Không tìm thấy thanh toán cho đơn hàng này");
+
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (int.TryParse(userIdClaim, out var userId) && userId > 0)
+        {
+            if (payment.Order.UserId != userId)
+                return Forbid();
+        }
 
         return Ok(payment);
     }
 
-    // Cập nhật trạng thái thanh toán (chỉ admin được gọi)
+    // Cập nhật trạng thái thanh toán (chỉ chủ đơn hàng hoặc hệ thống gọi)
     [HttpPut("update-status/{id}")]
-    [Authorize(Roles = "admin")] // Chỉ admin mới được cập nhật trạng thái thanh toán
+    [Authorize]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] PaymentStatus newStatus)
     {
         var payment = await _context.Payments
@@ -103,10 +126,25 @@ public class PaymentController : ControllerBase
         if (payment == null)
             return NotFound("Không tìm thấy thanh toán");
 
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (int.TryParse(userIdClaim, out var userId) && userId > 0)
+        {
+            if (payment.Order.UserId != userId)
+                return Forbid();
+        }
+
         payment.Status = newStatus;
         await _context.SaveChangesAsync();
 
         return Ok(new { message = "Cập nhật trạng thái thành công!", payment });
+    }
+    public class CreatePaymentDto
+    {
+        public int OrderId { get; set; }
+        public string PaymentMethod { get; set; } = null!;
+        public int Amount { get; set; }
+        public string? PaymentGateway { get; set; }
+        public string? TransactionId { get; set; }
     }
 
 }
