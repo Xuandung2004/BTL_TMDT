@@ -63,29 +63,41 @@ export default function OrderPage() {
               </tr>
             </thead>
             <tbody className="text-gray-700 text-sm">
-              {orders.map((order, index) => (
-                <tr key={order.id} className="border-t hover:bg-gray-50">
-                  <td className="px-4 py-2">{index + 1}</td>
-                  <td className="px-4 py-2">{order.user?.fullName || 'Không rõ'}</td>
-                  <td className="px-4 py-2">{order.totalAmount?.toLocaleString()}₫</td>
-                  <td className="px-4 py-2">{new Date(order.createdAt).toLocaleDateString()}</td>
-                  <td className="px-4 py-2">{order.status || 'Chưa cập nhật'}</td>
-                  <td className="px-4 py-2 space-x-3">
-                    <button
-                      onClick={() => handleViewDetails(order.orderId)}
-                      className="text-blue-600 hover:underline font-medium"
-                    >
-                      👁️ Xem
-                    </button>
-                    <button
-                      onClick={() => handleDelete(order.orderId)}
-                      className="text-red-600 hover:underline font-medium"
-                    >
-                      🗑️ Xoá
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {orders.map((order, index) => {
+                console.log('🧾 Order:', order); // 👉 Log kiểm tra dữ liệu ở đây
+
+                return (
+                  <tr key={order.id} className="border-t hover:bg-gray-50">
+                    <td className="px-4 py-2">{index + 1}</td>
+                    <td className="px-4 py-2">{order.user?.fullName || 'Không rõ'}</td>
+                    <td className="px-4 py-2">{order.totalAmount?.toLocaleString()}₫</td>
+                    <td className="px-4 py-2">
+                      {new Date(order.orderDate).toLocaleDateString()}
+                    </td>
+                    <td className="px-4 py-2">
+                      {order.payment?.status === 'Success'
+                        ? '✅ Đã thanh toán'
+                        : order.payment?.status === 'Failed'
+                        ? '❌ Thất bại'
+                        : '⌛ Đang xử lý'}
+                    </td>
+                    <td className="px-4 py-2 space-x-3">
+                      <button
+                        onClick={() => handleViewDetails(order.orderId)}
+                        className="text-blue-600 hover:underline font-medium"
+                      >
+                        👁️ Xem
+                      </button>
+                      <button
+                        onClick={() => handleDelete(order.orderId)}
+                        className="text-red-600 hover:underline font-medium"
+                      >
+                        🗑️ Xoá
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { fetchUserById, updateUser, changeUserPassword } from '../services/api';
@@ -13,6 +14,7 @@ export default function ProfilePage() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [passwordForm, setPasswordForm] = useState({ oldPassword: '', newPassword: '' });
   const [passwordMsg, setPasswordMsg] = useState('');
+  const router = useRouter();
 
   const getUserIdFromToken = () => {
     try {
@@ -87,7 +89,7 @@ export default function ProfilePage() {
       <Header />
       <div className="flex flex-1 items-start justify-center py-12 px-4">
         <div className="w-full max-w-xl bg-white rounded-xl shadow-md p-8">
-          <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">👤 Thông tin tài khoản</h2>
+          <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">👤 Xem thông tin người dùng</h2>
 
           {message && <p className="text-center text-green-600 font-medium mb-4">{message}</p>}
 
@@ -96,10 +98,11 @@ export default function ProfilePage() {
               <Field label="Tên đăng nhập" name="username" value={form.username} onChange={() => { }} disabled />
               <Field label="Họ tên" name="fullName" value={form.fullName} onChange={() => { }} disabled />
               <Field label="Số điện thoại" name="phone" value={form.phone} onChange={() => { }} disabled />
-              <ActionButton onClick={() => setEdit(true)} primary>✏️ Sửa thông tin</ActionButton>
+              <ActionButton onClick={() => setEdit(true)} primary>✏️ Sửa thông tin người dùng</ActionButton>
               <ActionButton onClick={() => setShowChangePassword(!showChangePassword)}>
                 🔒 {showChangePassword ? 'Đóng đổi mật khẩu' : 'Đổi mật khẩu'}
               </ActionButton>
+              <ActionButton onClick={() => router.push('/orders')}>🛒 Xem đơn hàng</ActionButton>
             </div>
           ) : (
             <form onSubmit={handleUpdate} className="space-y-4">
@@ -137,6 +140,14 @@ export default function ProfilePage() {
               <ActionButton onClick={() => setShowChangePassword(false)}>❎ Đóng</ActionButton>
             </form>
           )}
+        </div>
+        <div className="px-6 mt-4">
+          <button
+            onClick={() => history.back()}
+            className="inline-block bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-lg transition"
+          >
+            ⬅️ Quay lại
+          </button>
         </div>
       </div>
       <Footer />

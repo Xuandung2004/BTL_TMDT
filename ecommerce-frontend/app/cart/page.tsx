@@ -16,14 +16,15 @@ export default function CartPage() {
     try {
       setLoading(true);
       const res = await fetchCart();
-      if (!Array.isArray(res.data)) {
-        setError("Dữ liệu giỏ hàng không hợp lệ");
-        setCartItems([]);
-      } else {
-        setCartItems(res.data);
-        setError(null);
+      const data = res.data;
+
+      if (!data || !Array.isArray(data)) {
+        throw new Error("Dữ liệu không hợp lệ");
       }
-    } catch (err) {
+
+      setCartItems(data);
+      setError(null);
+    } catch {
       setError("Lỗi khi tải giỏ hàng. Vui lòng thử lại sau.");
       setCartItems([]);
     } finally {
@@ -65,13 +66,20 @@ export default function CartPage() {
   };
 
   if (loading) return <div className="p-8 text-center">Đang tải giỏ hàng...</div>;
-  if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
-  if (cartItems.length === 0) return (
-    <div className="p-8 text-center">
-      <h2 className="text-xl font-semibold mb-2">🛒 Giỏ hàng trống</h2>
-      <Link href="/product" className="text-blue-600 hover:underline">Tiếp tục mua sắm</Link>
-    </div>
-  );
+
+  if (error) {
+    return (
+      <div className="p-8 text-center text-red-500">
+        <p>{error}</p>
+        <button
+          onClick={loadCart}
+          className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Thử lại
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
@@ -79,7 +87,10 @@ export default function CartPage() {
         <h1 className="text-2xl font-bold flex items-center gap-2 text-gray-800">
           <FiShoppingBag className="text-orange-500" /> Giỏ hàng ({cartItems.length})
         </h1>
-        <Link href="/product" className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow font-medium flex items-center gap-2">
+        <Link
+          href="/product"
+          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow font-medium flex items-center gap-2"
+        >
           <FiArrowLeft /> Tiếp tục mua
         </Link>
       </div>
@@ -92,16 +103,23 @@ export default function CartPage() {
           <div className="col-span-2 text-right">Thành tiền</div>
         </div>
 
-        <div className="divide-y">
-          {cartItems.map((item) => (
-            <CartItem
-              key={item.productId}
-              item={item}
-              onUpdateQuantity={handleUpdateQuantity}
-              onDeleteItem={handleDeleteItem}
-            />
-          ))}
-        </div>
+        {cartItems.length === 0 ? (
+          <div className="p-8 text-center text-gray-500">
+            <h2 className="text-lg font-semibold mb-2">🛒 Giỏ hàng trống</h2>
+            <p className="text-sm mb-4">Bạn chưa thêm sản phẩm nào vào giỏ hàng.</p>
+          </div>
+        ) : (
+          <div className="divide-y">
+            {cartItems.map((item) => (
+              <CartItem
+                key={item.productId}
+                item={item}
+                onUpdateQuantity={handleUpdateQuantity}
+                onDeleteItem={handleDeleteItem}
+              />
+            ))}
+          </div>
+        )}
 
         <div className="border-t p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -112,7 +130,11 @@ export default function CartPage() {
               <p className="text-sm text-gray-500">(Đã bao gồm VAT nếu có)</p>
               <Link
                 href="/checkout"
-                className="inline-block mt-4 bg-orange-500 hover:bg-orange-600 text-white py-3 px-8 rounded-lg font-semibold shadow-md transition"
+                className={`inline-block mt-4 py-3 px-8 rounded-lg font-semibold shadow-md transition ${
+                  cartItems.length === 0
+                    ? "bg-gray-300 text-white cursor-not-allowed pointer-events-none"
+                    : "bg-orange-500 hover:bg-orange-600 text-white"
+                }`}
               >
                 Thanh toán ngay
               </Link>

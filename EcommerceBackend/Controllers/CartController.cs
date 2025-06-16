@@ -79,7 +79,7 @@ namespace Controllers{
                 .ToListAsync();
 
             if (!cartItems.Any())
-                return NotFound("Giỏ hàng trống.");
+                return Ok(cartItems);
 
             return Ok(cartItems);
         }

@@ -50,7 +50,6 @@ useEffect(() => {
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white shadow rounded-lg border mt-10">
       <h1 className="text-3xl font-bold text-orange-700 mb-6">Chi tiết đơn hàng 🧾</h1>
-
       <div className="mb-6 space-y-1">
         <p><strong>Mã đơn hàng:</strong> #{order.orderId}</p>
         <p><strong>Ngày đặt:</strong> {new Date(order.createdAt).toLocaleString()}</p>
@@ -102,14 +101,20 @@ useEffect(() => {
           <p><strong>Cổng thanh toán:</strong> {payment.paymentGateway || '---'}</p>
         </div>
       )}
-      <div className="text-center mt-6">
-        <Link
-            href="/"
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+      <div className="flex justify-center gap-4 mt-6">
+        <button
+          onClick={() => history.back()}
+          className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
         >
-            🔙 Về trang chủ
+          ⬅️ Quay lại đơn hàng
+        </button>
+        <Link
+          href="/"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+        >
+          🏠 Về trang chủ
         </Link>
-        </div>
+      </div>
     </div>
   );
 }
