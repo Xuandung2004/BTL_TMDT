@@ -1,7 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+<<<<<<< Updated upstream
 import { fetchCart, updateCartItem, deleteCartItem} from '../services/api';
+=======
+import Link from 'next/link';
+import { FiShoppingBag, FiArrowLeft } from 'react-icons/fi';
+import { fetchCart, updateCartItem, deleteCartItem } from '../services/api';
+import CartItem from '@/components/card/CartItem';
+import Header from '@/components/layout/Header';
+>>>>>>> Stashed changes
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<any[]>([]);
@@ -20,10 +28,12 @@ export default function CartPage() {
     }
   }, []);
 
+  // Load giỏ hàng
   const loadCart = async () => {
     try {
       setLoading(true);
       const res = await fetchCart();
+<<<<<<< Updated upstream
       setCartItems(res.data);
 
       const totalPrice = res.data.reduce(
@@ -33,6 +43,17 @@ export default function CartPage() {
       setTotal(totalPrice);
     } catch {
       setError('Lỗi khi tải giỏ hàng. Vui lòng thử lại sau.');
+=======
+      if (Array.isArray(res.data)) {
+        setCartItems(res.data);
+        setError(null);
+      } else {
+        throw new Error();
+      }
+    } catch {
+      setCartItems([]);
+      setError("Lỗi khi tải giỏ hàng. Vui lòng thử lại sau.");
+>>>>>>> Stashed changes
     } finally {
       setLoading(false);
     }
@@ -44,6 +65,22 @@ export default function CartPage() {
       return;
     }
 
+<<<<<<< Updated upstream
+=======
+  // Tính tổng tiền
+  useEffect(() => {
+    const totalPrice = cartItems.reduce((sum, item) => {
+      const price = item.product?.price ?? 0;
+      const qty = item.quantity ?? 0;
+      return sum + price * qty;
+    }, 0);
+    setTotal(totalPrice);
+  }, [cartItems]);
+
+  // Cập nhật số lượng
+  const handleUpdateQuantity = async (productId: number, quantity: number) => {
+    if (quantity < 1) return;
+>>>>>>> Stashed changes
     try {
       await updateCartItem(productId, quantity);
       const updatedItems = cartItems.map((item) =>
@@ -61,6 +98,7 @@ export default function CartPage() {
     }
   };
 
+  // Xóa sản phẩm
   const handleDeleteItem = async (productId: number) => {
     if (!confirm('Bạn có chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng không?')) return;
 
@@ -79,6 +117,7 @@ export default function CartPage() {
     }
   };
 
+<<<<<<< Updated upstream
   if (loading)
     return (
       <div className="flex h-screen justify-center items-center">
@@ -121,8 +160,59 @@ export default function CartPage() {
         </a>
       </div>
     );
+=======
+  // === RENDER === //
+>>>>>>> Stashed changes
 
+  // 1. Loading
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <div className="p-8 text-center">Đang tải giỏ hàng...</div>
+      </>
+    );
+  }
+
+  // 2. Empty cart
+  if (!loading && cartItems.length === 0) {
+    return (
+      <>
+        <Header />
+        <div className="flex flex-col items-center justify-center h-screen text-center px-4">
+          <div className="p-8 bg-white rounded-2xl shadow-lg max-w-md w-full">
+            <FiShoppingBag className="mx-auto text-6xl text-gray-300 mb-4" />
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+              Oops, giỏ hàng của bạn đang trống!
+            </h2>
+            <p className="text-gray-500 mb-6">
+              Chưa có sản phẩm nào được thêm vào giỏ. Khám phá ngay để tìm món ưng ý!
+            </p>
+            <Link
+              href="/product"
+              className="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-full transition-shadow shadow-md"
+            >
+              <FiArrowLeft size={20} /> Tiếp tục mua sắm
+            </Link>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // 3. Error
+  if (error) {
+    return (
+      <>
+        <Header />
+        <div className="p-8 text-center text-red-500">{error}</div>
+      </>
+    );
+  }
+
+  // 4. Cart with items
   return (
+<<<<<<< Updated upstream
     <div className="max-w-7xl mx-auto p-6 bg-orange-50 min-h-screen">
       <h1 className="text-4xl font-extrabold text-orange-600 mb-8 select-none">Giỏ hàng của bạn</h1>
 
@@ -140,6 +230,22 @@ export default function CartPage() {
           >
             Tiếp tục mua sắm
           </a>
+=======
+    <>
+      <Header />
+
+      <div className="max-w-4xl mx-auto p-4 md:p-6">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-gray-800">
+            <FiShoppingBag className="text-orange-500" /> Giỏ hàng ({cartItems.length})
+          </h1>
+          <Link
+            href="/product"
+            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow font-medium flex items-center gap-2"
+          >
+            <FiArrowLeft /> Tiếp tục mua
+          </Link>
+>>>>>>> Stashed changes
         </div>
       ) : (
         <>
@@ -182,6 +288,7 @@ export default function CartPage() {
                       </div>
                     </td>
 
+<<<<<<< Updated upstream
                     <td className="px-6 py-4 text-center">
                       <input
                         type="number"
@@ -237,5 +344,49 @@ export default function CartPage() {
         </>
       )}
     </div>
+=======
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div className="hidden md:grid grid-cols-12 bg-gray-50 px-6 py-3 text-sm font-medium text-gray-500 border-b">
+            <div className="col-span-6">Sản phẩm</div>
+            <div className="col-span-2 text-center">Đơn giá</div>
+            <div className="col-span-2 text-center">Số lượng</div>
+            <div className="col-span-2 text-right">Thành tiền</div>
+          </div>
+
+          <div className="divide-y">
+            {cartItems.map(item => (
+              <CartItem
+                key={item.productId}
+                item={item}
+                onUpdateQuantity={handleUpdateQuantity}
+                onDeleteItem={handleDeleteItem}
+              />
+            ))}
+          </div>
+
+          <div className="border-t p-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <p className="text-sm text-gray-600">
+                Miễn phí vận chuyển cho đơn hàng trên 500.000₫
+              </p>
+              <div className="text-right">
+                <p className="text-gray-700">Tổng tiền:</p>
+                <p className="text-2xl font-bold text-orange-600">
+                  {total.toLocaleString()}₫
+                </p>
+                <p className="text-sm text-gray-500">(Đã bao gồm VAT nếu có)</p>
+                <Link
+                  href="/checkout"
+                  className="inline-block mt-4 bg-orange-500 hover:bg-orange-600 text-white py-3 px-8 rounded-lg font-semibold shadow-md transition"
+                >
+                  Thanh toán ngay
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+>>>>>>> Stashed changes
   );
 }

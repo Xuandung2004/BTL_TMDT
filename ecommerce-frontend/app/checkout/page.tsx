@@ -1,7 +1,14 @@
 'use client';
 
+<<<<<<< Updated upstream
 import { useEffect, useState } from 'react';
 import { fetchCart } from '../services/api';
+=======
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import Header from '@/components/layout/Header';
+import { fetchCart, submitOrder } from '../services/api';
+>>>>>>> Stashed changes
 
 type FormData = {
   fullName: string;
@@ -23,55 +30,70 @@ export default function CheckoutPage() {
     phone: '',
     address: '',
     note: '',
+<<<<<<< Updated upstream
+=======
+    paymentMethod: 'cod',
+>>>>>>> Stashed changes
   });
 
   const [formErrors, setFormErrors] = useState<Partial<FormData>>({});
   const [submitting, setSubmitting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
 
+  // Load giỏ hàng và tính tổng
   useEffect(() => {
+<<<<<<< Updated upstream
     const loadCart = async () => {
+=======
+    (async () => {
+>>>>>>> Stashed changes
       try {
         setLoadingCart(true);
         const res = await fetchCart();
         setCartItems(res.data);
-        const totalAmount = res.data.reduce(
-          (sum: number, item: any) => sum + item.product.price * item.quantity,
+        const sum = res.data.reduce(
+          (s: number, item: any) =>
+            s + (item.product?.price ?? 0) * (item.quantity ?? 0),
           0
         );
-        setTotal(totalAmount);
+        setTotal(sum);
         setErrorCart(null);
       } catch {
         setErrorCart('Lỗi khi tải giỏ hàng. Vui lòng thử lại sau.');
       } finally {
         setLoadingCart(false);
       }
-    };
-    loadCart();
+    })();
   }, []);
 
+  // Validate form
   const validate = () => {
-    const errors: Partial<FormData> = {};
-    if (!form.fullName.trim()) errors.fullName = 'Vui lòng nhập họ tên';
-    if (!form.email.trim()) {
-      errors.email = 'Vui lòng nhập email';
-    } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(form.email)) {
-      errors.email = 'Email không hợp lệ';
-    }
-    if (!form.phone.trim()) {
-      errors.phone = 'Vui lòng nhập số điện thoại';
-    } else if (!/^\d{9,15}$/.test(form.phone.replace(/\s+/g, ''))) {
-      errors.phone = 'Số điện thoại không hợp lệ';
-    }
-    if (!form.address.trim()) errors.address = 'Vui lòng nhập địa chỉ giao hàng';
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
+    const errs: Partial<FormData> = {};
+    if (!form.fullName.trim()) errs.fullName = 'Vui lòng nhập họ tên';
+    if (!form.email.trim()) errs.email = 'Vui lòng nhập email';
+    else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(form.email))
+      errs.email = 'Email không hợp lệ';
+    if (!form.phone.trim()) errs.phone = 'Vui lòng nhập số điện thoại';
+    else if (!/^\d{9,15}$/.test(form.phone.replace(/\s+/g, '')))
+      errs.phone = 'Số điện thoại không hợp lệ';
+    if (!form.address.trim()) errs.address = 'Vui lòng nhập địa chỉ';
+    setFormErrors(errs);
+    return Object.keys(errs).length === 0;
   };
 
+<<<<<<< Updated upstream
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+=======
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+>>>>>>> Stashed changes
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Gửi đơn hàng
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
@@ -85,6 +107,7 @@ export default function CheckoutPage() {
     setTimeout(() => {
       setSubmitting(false);
       setOrderSuccess(true);
+<<<<<<< Updated upstream
     }, 2000);
   };
 
@@ -108,9 +131,63 @@ export default function CheckoutPage() {
           Tiếp tục mua sắm
         </a>
       </div>
+=======
+    } catch {
+      alert('Lỗi khi gửi đơn hàng.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Placeholder map
+  const placeholderMap: Record<keyof FormData, string> = {
+    fullName: 'Họ và tên',
+    email: 'Email',
+    phone: 'Số điện thoại',
+    address: 'Địa chỉ giao hàng',
+    note: 'Ghi chú (tuỳ chọn)',
+    paymentMethod: '',
+  };
+
+  // === RENDER === //
+  if (orderSuccess) {
+    return (
+      <>
+        <Header />
+        <div className="max-w-3xl mx-auto p-8 text-center">
+          <h1 className="text-4xl font-extrabold text-green-600 mb-6">
+            🎉 Đặt hàng thành công!
+          </h1>
+          <p className="text-lg mb-6">Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ sớm.</p>
+          <Link
+            href="/product"
+            className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded transition"
+          >
+            Tiếp tục mua sắm
+          </Link>
+        </div>
+      </>
+>>>>>>> Stashed changes
     );
+  }
+
+  if (loadingCart || errorCart) {
+    return (
+      <>
+        <Header />
+        <div className="text-center py-12">
+          {loadingCart ? (
+            <p className="text-gray-600">Đang tải giỏ hàng...</p>
+          ) : (
+            <p className="text-red-500">{errorCart}</p>
+          )}
+        </div>
+      </>
+    );
+  }
 
   return (
+<<<<<<< Updated upstream
     <div className="max-w-7xl mx-auto p-8 bg-orange-50 min-h-screen">
       <h1 className="text-4xl font-extrabold text-orange-600 mb-10 select-none">Thanh toán đơn hàng</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -238,11 +315,27 @@ export default function CheckoutPage() {
             disabled={submitting}
             className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-50"
             aria-busy={submitting}
-          >
-            {submitting ? 'Đang xử lý...' : 'Xác nhận đặt hàng'}
-          </button>
-        </form>
+=======
+    <>
+      <Header />
 
+      <div className="max-w-7xl mx-auto p-8 bg-orange-50 min-h-screen">
+        <h1 className="text-4xl font-extrabold text-orange-600 mb-10 select-none">
+          Thanh toán đơn hàng
+        </h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Form thông tin */}
+          <form
+            onSubmit={handleSubmit}
+            className="md:col-span-2 bg-white rounded-lg shadow-lg p-6 space-y-6 border border-orange-300"
+>>>>>>> Stashed changes
+          >
+            <h2 className="text-2xl font-semibold text-orange-700">
+              Thông tin giao hàng
+            </h2>
+
+<<<<<<< Updated upstream
         {/* Right: Tổng đơn hàng */}
         <aside className="bg-white rounded-lg shadow-lg p-6 border border-orange-300">
           <h2 className="text-2xl font-semibold text-orange-700 mb-6">Đơn hàng của bạn</h2>
@@ -258,17 +351,103 @@ export default function CheckoutPage() {
                   </div>
                   <div className="font-bold text-orange-800">
                     {(item.product.price * item.quantity).toLocaleString()} đ
+=======
+            {(['fullName', 'email', 'phone', 'address'] as Array<
+              keyof FormData
+            >).map((field) => (
+              <div key={field}>
+                <input
+                  name={field}
+                  value={form[field]}
+                  onChange={handleChange}
+                  placeholder={placeholderMap[field]}
+                  className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-300"
+                />
+                {formErrors[field] && (
+                  <p className="text-red-500 text-sm mt-1">{formErrors[field]}</p>
+                )}
+              </div>
+            ))}
+
+            {/* Ghi chú */}
+            <textarea
+              name="note"
+              value={form.note}
+              onChange={handleChange}
+              placeholder={placeholderMap.note}
+              className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-300"
+            />
+
+            {/* Phương thức thanh toán */}
+            <div>
+              <label className="block font-medium mb-1">
+                Phương thức thanh toán
+              </label>
+              <select
+                name="paymentMethod"
+                value={form.paymentMethod}
+                onChange={handleChange}
+                className="w-full border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-300"
+              >
+                <option value="cod">
+                  COD (Thanh toán khi nhận hàng)
+                </option>
+                <option value="bank">Chuyển khoản ngân hàng</option>
+                <option value="momo">Ví điện tử MoMo</option>
+                <option value="zalopay">Ví điện tử ZaloPay</option>
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded transition"
+            >
+              {submitting ? 'Đang xử lý...' : 'Xác nhận đặt hàng'}
+            </button>
+          </form>
+
+          {/* Tóm tắt đơn hàng */}
+          <aside className="bg-white rounded-lg shadow-lg p-6 border border-orange-300">
+            <h2 className="text-2xl font-semibold text-orange-700 mb-4">
+              Đơn hàng của bạn
+            </h2>
+            <ul className="divide-y divide-gray-200 max-h-80 overflow-y-auto mb-6">
+              {cartItems.map((item) => (
+                <li
+                  key={item.productId}
+                  className="flex justify-between py-3"
+                >
+                  <div>
+                    <p className="font-semibold text-gray-800">
+                      {item.product.name}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      x{item.quantity}
+                    </p>
+                  </div>
+                  <div className="font-bold text-gray-900">
+                    {(item.product.price * item.quantity).toLocaleString()}₫
+>>>>>>> Stashed changes
                   </div>
                 </li>
               ))}
             </ul>
+<<<<<<< Updated upstream
           )}
           <div className="border-t border-gray-300 mt-6 pt-4 text-right font-extrabold text-xl text-orange-800">
             Tổng tiền: {total.toLocaleString()} đ
           </div>
         </aside>
+=======
+            <div className="border-t border-gray-300 pt-4 text-right font-extrabold text-xl text-gray-900">
+              Tổng: {total.toLocaleString()}₫
+            </div>
+          </aside>
+        </div>
+>>>>>>> Stashed changes
       </div>
-    </div>
+    </>
   );
 }
 

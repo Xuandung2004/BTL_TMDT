@@ -120,6 +120,8 @@ export const deleteUser = (id: number) => {
 };
 
 // quản lý đơn hàng
+export const fetchOrderById = (orderId: number) =>
+  API.get(`/orders/${orderId}`);
 // Lấy tất cả đơn hàng
 export const fetchAllOrder = () => {
   return API.get('/Order/getAll', {
